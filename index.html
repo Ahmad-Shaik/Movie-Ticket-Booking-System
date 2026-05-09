@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Tickets | Movie Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-black text-light">
+
+    <nav class="navbar navbar-dark border-bottom border-magenta">
+        <div class="container">
+            <a class="navbar-brand neon-text-cyan" href="#">NEON CINEMAS</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <h3 class="neon-text-magenta">Select Movie</h3>
+                <select id="movie" class="form-select bg-dark text-white border-cyan">
+                    <option value="12">Cyberpunk 2077 ($12)</option>
+                    <option value="10">Tron: Legacy ($10)</option>
+                    <option value="15">Blade Runner 2049 ($15)</option>
+                </select>
+            </div>
+
+            <div class="col-md-8 text-center">
+                <div class="screen">SCREEN</div>
+                <div id="seat-container" class="d-flex flex-wrap justify-content-center">
+                    </div>
+                
+                <div class="mt-4 p-3 border-neon">
+                    <p>Seats Selected: <span id="count" class="text-cyan">0</span></p>
+                    <p>Total Price: $<span id="total" class="text-magenta">0</span></p>
+                    <button id="book-btn" class="btn btn-outline-cyan">Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

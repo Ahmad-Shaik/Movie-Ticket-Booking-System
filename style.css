@@ -1,0 +1,61 @@
+:root {
+    --cyan: #00f3ff;
+    --magenta: #ff00ff;
+}
+
+body { font-family: 'Courier New', Courier, monospace; }
+
+.neon-text-cyan { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+.neon-text-magenta { color: var(--magenta); text-shadow: 0 0 10px var(--magenta); }
+
+.border-cyan { border: 1px solid var(--cyan) !important; box-shadow: 0 0 5px var(--cyan); }
+
+.screen {
+    width: 80%;
+    height: 10px;
+    background: var(--cyan);
+    margin: 20px auto;
+    box-shadow: 0 3px 15px var(--cyan);
+    transform: rotateX(-45deg);
+}
+
+.seat {
+    height: 20px;
+    width: 25px;
+    border: 1px solid var(--magenta);
+    margin: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    cursor: pointer;
+}
+
+.seat.selected { background-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+.seat.occupied { background-color: #444; border-color: #222; cursor: not-allowed; }
+
+/* Add a pulsing effect to selected seats */
+.seat.selected {
+    background-color: var(--cyan);
+    box-shadow: 0 0 15px var(--cyan), 0 0 30px var(--cyan);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Style the Book Button */
+#book-btn {
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#book-btn:hover {
+    background: var(--cyan);
+    color: black;
+    box-shadow: 0 0 20px var(--cyan);
+}
