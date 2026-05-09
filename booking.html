@@ -8,21 +8,27 @@
 </head>
 <body class="bg-black text-light">
     <div class="container mt-4">
-        <h1 class="neon-text-cyan text-center">DOLL MOVIES BOOKING</h1>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="neon-text-cyan">DOLL MOVIES</h1>
+            <a href="index.html" class="btn btn-sm btn-outline-danger">Logout</a>
+        </div>
+
         <div class="row mt-5">
             <div class="col-md-4">
-                <label>Select Movie:</label>
+                <label class="mb-2">Select Movie:</label>
                 <select id="movie-select" class="form-select bg-dark text-white border-magenta mb-4">
-                    </select>
-                <div class="p-3 border-neon">
-                    <p>Seats: <span id="count" class="text-cyan">0</span></p>
-                    <p>Total: $<span id="total" class="text-magenta">0</span></p>
+                    <option value="0">Loading movies...</option>
+                </select>
+                <div class="p-3 border-cyan bg-dark shadow-neon">
+                    <p>Seats Selected: <span id="count" class="text-cyan">0</span></p>
+                    <p>Total Price: $<span id="total" class="text-magenta">0</span></p>
                     <button id="book-btn" class="btn btn-outline-cyan w-100">Confirm Booking</button>
                 </div>
             </div>
-            <div class="col-md-8">
-                <div class="screen">SCREEN</div>
-                <div id="seat-container" class="d-flex flex-wrap justify-content-center"></div>
+            <div class="col-md-8 text-center">
+                <div class="screen mb-4">SCREEN</div>
+                <div id="seat-container" class="d-flex flex-wrap justify-content-center" style="max-width: 450px; margin: auto;">
+                    </div>
             </div>
         </div>
     </div>
