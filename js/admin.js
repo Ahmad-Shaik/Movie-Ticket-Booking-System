@@ -366,6 +366,96 @@ async (id) => {
 
 };
 
+window.editMovie =
+async (id) => {
+
+  const movieName =
+  prompt('Enter New Movie Name');
+
+  if(!movieName){
+
+    return;
+  }
+
+  const place =
+  prompt('Enter New Place');
+
+  const theater =
+  prompt('Enter New Theater');
+
+  const ticketPrice =
+  prompt('Enter New Ticket Price');
+
+  const showTime =
+  prompt('Enter New Show Time');
+
+  const posterUrl =
+  prompt('Enter New Poster URL');
+
+  const rows =
+  prompt('Enter Rows');
+
+  const cols =
+  prompt('Enter Columns');
+
+  const walkwayAfter =
+  prompt('Walkway After Seats');
+
+  const walkwayType =
+  prompt('Walkway Type vertical/horizontal');
+
+  const startDate =
+  prompt('Movie Start Date');
+
+  try {
+
+    await setDoc(
+      doc(db, 'movies', id),
+      {
+
+        movieName,
+        place,
+        theater,
+        ticketPrice:
+        Number(ticketPrice),
+
+        showTime,
+
+        posterUrl,
+
+        rows:
+        Number(rows),
+
+        cols:
+        Number(cols),
+
+        walkwayAfter:
+        Number(walkwayAfter),
+
+        walkwayType,
+
+        startDate,
+
+        active:true
+
+      }
+
+    );
+
+    alert('Movie Updated');
+
+    loadMovies();
+
+  } catch(error){
+
+    console.log(error);
+
+    alert(error.message);
+
+  }
+
+};
+
 // ======================
 // LOAD USERS
 // ======================
