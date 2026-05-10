@@ -14,8 +14,12 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+// ======================
 // REGISTER
-const registerBtn = document.getElementById('registerBtn');
+// ======================
+
+const registerBtn =
+document.getElementById('registerBtn');
 
 if(registerBtn){
 
@@ -43,12 +47,25 @@ if(registerBtn){
       !address ||
       !password
     ){
+
       alert('Please Fill All Fields');
+
       return;
     }
 
+    // BUTTON LOADING
+    registerBtn.disabled = true;
+
+    registerBtn.innerHTML = `
+      <span
+        class="spinner-border spinner-border-sm"
+      ></span>
+      Registering...
+    `;
+
     try {
 
+      // CREATE USER
       const userCredential =
       await createUserWithEmailAndPassword(
         auth,
@@ -56,22 +73,34 @@ if(registerBtn){
         password
       );
 
-      const user = userCredential.user;
+      const user =
+      userCredential.user;
 
       // SAVE USER DATA
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        name,
-        email,
-        phone,
-        address,
-        role: 'user',
-        createdAt: new Date()
-      });
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          uid: user.uid,
+          name,
+          email,
+          phone,
+          address,
+          role: 'user',
+          createdAt: new Date()
+        }
+      );
 
-      alert('Registration Successful');
+      // SUCCESS
+      registerBtn.innerHTML = `
+        Registration Successful ✓
+      `;
 
-      window.location.href = 'index.html';
+      setTimeout(() => {
+
+        window.location.href =
+        './index.html';
+
+      }, 1200);
 
     } catch(error){
 
@@ -79,14 +108,24 @@ if(registerBtn){
 
       alert(error.message);
 
+      registerBtn.disabled = false;
+
+      registerBtn.innerHTML = `
+        Register
+      `;
+
     }
 
   });
 
 }
 
+// ======================
 // LOGIN
-const loginBtn = document.getElementById('loginBtn');
+// ======================
+
+const loginBtn =
+document.getElementById('loginBtn');
 
 if(loginBtn){
 
@@ -99,12 +138,25 @@ if(loginBtn){
     document.getElementById('loginPassword').value;
 
     if(!email || !password){
+
       alert('Enter Email & Password');
+
       return;
     }
 
+    // BUTTON LOADING
+    loginBtn.disabled = true;
+
+    loginBtn.innerHTML = `
+      <span
+        class="spinner-border spinner-border-sm"
+      ></span>
+      Logging in...
+    `;
+
     try {
 
+      // LOGIN
       const userCredential =
       await signInWithEmailAndPassword(
         auth,
@@ -112,14 +164,17 @@ if(loginBtn){
         password
       );
 
-      const user = userCredential.user;
+      const user =
+      userCredential.user;
 
       // GET USER DATA
-      const userRef = doc(db, 'users', user.uid);
+      const userRef =
+      doc(db, 'users', user.uid);
 
-      const userSnap = await getDoc(userRef);
+      const userSnap =
+      await getDoc(userRef);
 
-      // IF USER DATA MISSING
+      // USER DOC MISSING
       if(!userSnap.exists()){
 
         await setDoc(userRef, {
@@ -131,21 +186,32 @@ if(loginBtn){
 
       }
 
+      const finalSnap =
+      await getDoc(userRef);
+
       const userData =
-      (await getDoc(userRef)).data();
+      finalSnap.data();
 
-      alert('Login Successful');
+      // SUCCESS
+      loginBtn.innerHTML = `
+        Login Successful ✓
+      `;
 
-      // REDIRECT
-      if(userData.role === 'admin'){
+      setTimeout(() => {
 
-        window.location.href = './admin.html';
+        if(userData.role === 'admin'){
 
-      } else {
+          window.location.href =
+          './admin.html';
 
-        window.location.href = './dashboard.html';
+        } else {
 
-      }
+          window.location.href =
+          './dashboard.html';
+
+        }
+
+      }, 1200);
 
     } catch(error){
 
@@ -153,13 +219,22 @@ if(loginBtn){
 
       alert(error.message);
 
+      loginBtn.disabled = false;
+
+      loginBtn.innerHTML = `
+        Login
+      `;
+
     }
 
   });
 
 }
 
-// SHOW REGISTER PASSWORD
+// ======================
+// SHOW/HIDE REGISTER PASSWORD
+// ======================
+
 const togglePassword =
 document.getElementById('togglePassword');
 
@@ -173,12 +248,16 @@ if(togglePassword){
     if(password.type === 'password'){
 
       password.type = 'text';
-      togglePassword.innerText = 'Hide';
+
+      togglePassword.innerText =
+      'Hide';
 
     } else {
 
       password.type = 'password';
-      togglePassword.innerText = 'Show';
+
+      togglePassword.innerText =
+      'Show';
 
     }
 
@@ -186,7 +265,10 @@ if(togglePassword){
 
 }
 
-// SHOW LOGIN PASSWORD
+// ======================
+// SHOW/HIDE LOGIN PASSWORD
+// ======================
+
 const toggleLoginPassword =
 document.getElementById('toggleLoginPassword');
 
@@ -200,12 +282,16 @@ if(toggleLoginPassword){
     if(password.type === 'password'){
 
       password.type = 'text';
-      toggleLoginPassword.innerText = 'Hide';
+
+      toggleLoginPassword.innerText =
+      'Hide';
 
     } else {
 
       password.type = 'password';
-      toggleLoginPassword.innerText = 'Show';
+
+      toggleLoginPassword.innerText =
+      'Show';
 
     }
 

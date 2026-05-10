@@ -137,3 +137,12 @@ body{
 textarea{
   resize:none;
 }
+
+.spinner-border{
+  margin-right:8px;
+}
+
+button:disabled{
+  opacity:0.8;
+  cursor:not-allowed;
+}
