@@ -192,3 +192,54 @@ button:disabled{
   margin-bottom:8px;
 
 }
+
+.neon-card{
+
+  background:#081120;
+
+  border:2px solid #00ffff;
+
+  border-radius:15px;
+
+  box-shadow:
+  0 0 20px #00ffff55;
+
+  color:white;
+
+}
+
+.neon-heading{
+
+  color:#00ffff;
+
+  text-shadow:
+  0 0 10px #00ffff;
+
+}
+
+.neon-input{
+
+  background:#0f172a !important;
+
+  border:1px solid #00ffff !important;
+
+  color:white !important;
+
+}
+
+.neon-input:focus{
+
+  background:#0f172a !important;
+
+  color:white !important;
+
+  box-shadow:
+  0 0 10px #00ffff !important;
+
+}
+
+.neon-input::placeholder{
+
+  color:#94a3b8;
+
+}
