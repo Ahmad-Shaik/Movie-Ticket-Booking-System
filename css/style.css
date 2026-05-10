@@ -243,3 +243,80 @@ button:disabled{
   color:#94a3b8;
 
 }
+
+/* ======================
+   USER MOVIE CARDS
+====================== */
+
+.movie-card{
+
+  background:#081120 !important;
+
+  border:2px solid #00ffff;
+
+  border-radius:15px;
+
+  box-shadow:
+  0 0 15px #00ffff44;
+
+  transition:0.3s;
+
+}
+
+.movie-card:hover{
+
+  transform:translateY(-5px);
+
+  box-shadow:
+  0 0 25px #00ffff;
+
+}
+
+.movie-card p{
+
+  margin-bottom:8px;
+
+}
+
+/* ======================
+   NEON BUTTON
+====================== */
+
+.neon-btn{
+
+  background:transparent;
+
+  border:2px solid #00ffff;
+
+  color:#00ffff;
+
+  font-weight:bold;
+
+  transition:0.3s;
+
+}
+
+.neon-btn:hover{
+
+  background:#00ffff;
+
+  color:black;
+
+  box-shadow:
+  0 0 15px #00ffff;
+
+}
+
+/* ======================
+   NEON HEADINGS
+====================== */
+
+.neon-heading{
+
+  color:#00ffff;
+
+  text-shadow:
+  0 0 10px #00ffff;
+
+}
+
