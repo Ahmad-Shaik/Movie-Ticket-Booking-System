@@ -10,7 +10,9 @@ import {
 
 import {
   collection,
-  getDocs
+  getDocs,
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const moviesContainer =
@@ -28,32 +30,95 @@ document.getElementById('placeFilter');
 const theaterFilter =
 document.getElementById('theaterFilter');
 
+const userName =
+document.getElementById('userName');
+
 let allMovies = [];
 
-// CHECK LOGIN
+// ======================
+// AUTH CHECK
+// ======================
+
 onAuthStateChanged(auth, async (user) => {
 
   if(!user){
 
-    window.location.href = './index.html';
+    window.location.href =
+    './index.html';
 
     return;
   }
 
+  // LOAD USER NAME
+  loadUserData(user.uid);
+
+  // LOAD MOVIES
   loadMovies();
 
 });
 
+// ======================
+// LOAD USER DATA
+// ======================
+
+async function loadUserData(uid){
+
+  try {
+
+    const userRef =
+    doc(db, 'users', uid);
+
+    const userSnap =
+    await getDoc(userRef);
+
+    if(userSnap.exists()){
+
+      const user =
+      userSnap.data();
+
+      // ADMIN
+      if(user.role === 'admin'){
+
+        userName.innerHTML =
+        '👑 ADMIN';
+
+      }
+
+      // USER
+      else {
+
+        userName.innerHTML =
+        `👤 ${user.name}`;
+
+      }
+
+    }
+
+  } catch(error){
+
+    console.log(error);
+
+  }
+
+}
+
+// ======================
 // LOGOUT
+// ======================
+
 logoutBtn.addEventListener('click', async () => {
 
   await signOut(auth);
 
-  window.location.href = './index.html';
+  window.location.href =
+  './index.html';
 
 });
 
+// ======================
 // LOAD MOVIES
+// ======================
+
 async function loadMovies(){
 
   try {
@@ -72,28 +137,38 @@ async function loadMovies(){
     let places = [];
     let theaters = [];
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach((docSnap) => {
 
       const movie = {
-        id: doc.id,
-        ...doc.data()
+        id: docSnap.id,
+        ...docSnap.data()
       };
 
       allMovies.push(movie);
 
+      // UNIQUE PLACE
       if(!places.includes(movie.place)){
+
         places.push(movie.place);
+
       }
 
+      // UNIQUE THEATER
       if(!theaters.includes(movie.theater)){
+
         theaters.push(movie.theater);
+
       }
 
     });
 
     // PLACE FILTER
     placeFilter.innerHTML =
-    `<option value="">Select Place</option>`;
+    `
+      <option value="">
+        Select Place
+      </option>
+    `;
 
     places.forEach(place => {
 
@@ -107,7 +182,11 @@ async function loadMovies(){
 
     // THEATER FILTER
     theaterFilter.innerHTML =
-    `<option value="">Select Theater</option>`;
+    `
+      <option value="">
+        Select Theater
+      </option>
+    `;
 
     theaters.forEach(theater => {
 
@@ -135,11 +214,15 @@ async function loadMovies(){
 
 }
 
+// ======================
 // RENDER MOVIES
+// ======================
+
 function renderMovies(movies){
 
   moviesContainer.innerHTML = '';
 
+  // EMPTY
   if(movies.length === 0){
 
     moviesContainer.innerHTML = `
@@ -209,7 +292,10 @@ function renderMovies(movies){
 
 }
 
+// ======================
 // FILTER MOVIES
+// ======================
+
 function filterMovies(){
 
   const search =
@@ -254,7 +340,10 @@ function filterMovies(){
 
 }
 
+// ======================
 // EVENTS
+// ======================
+
 searchInput.addEventListener(
   'input',
   filterMovies

@@ -28,20 +28,35 @@
 
 <div class="container-fluid py-4">
 
+  <!-- TOP BAR -->
+
   <div class="d-flex justify-content-between align-items-center mb-4">
 
     <h1 class="title">
       🎬 DOLLY MOVIES
     </h1>
 
-    <button
-      id="logoutBtn"
-      class="btn neon-btn"
-    >
-      Logout
-    </button>
+    <div class="d-flex align-items-center gap-3">
+
+      <h5
+        id="userName"
+        class="m-0 text-info"
+      >
+        Loading...
+      </h5>
+
+      <button
+        id="logoutBtn"
+        class="btn neon-btn"
+      >
+        Logout
+      </button>
+
+    </div>
 
   </div>
+
+  <!-- SEARCH + FILTER -->
 
   <div class="card p-4 mb-4">
 
@@ -83,6 +98,8 @@
     </div>
 
   </div>
+
+  <!-- MOVIES -->
 
   <div
     class="row"
