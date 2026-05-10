@@ -139,11 +139,11 @@ if(loginBtn){
       // REDIRECT
       if(userData.role === 'admin'){
 
-        window.location.href = 'admin.html';
+        window.location.href = './admin.html';
 
       } else {
 
-        window.location.href = 'dashboard.html';
+        window.location.href = './dashboard.html';
 
       }
 
