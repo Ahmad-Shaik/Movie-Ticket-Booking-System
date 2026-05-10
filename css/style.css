@@ -146,3 +146,39 @@ button:disabled{
   opacity:0.8;
   cursor:not-allowed;
 }
+
+.sidebar{
+
+  background:#081120;
+
+  border-right:
+  2px solid #00ffff;
+
+  box-shadow:
+  0 0 20px #00ffff33;
+
+}
+
+.movie-card{
+
+  transition:0.3s;
+}
+
+.movie-card:hover{
+
+  transform:translateY(-5px);
+
+  box-shadow:
+  0 0 20px #00ffff;
+}
+
+.table{
+
+  border-color:#00ffff !important;
+}
+
+.table th,
+.table td{
+
+  color:white !important;
+}
