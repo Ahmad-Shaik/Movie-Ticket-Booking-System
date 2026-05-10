@@ -438,3 +438,110 @@ p{
   0 0 10px #00ffff;
 
 }
+
+/* ======================
+   BOOKING PAGE
+====================== */
+
+.screen{
+
+  width:300px;
+
+  margin:auto;
+
+  padding:15px;
+
+  border-radius:10px;
+
+  background:#00ffff;
+
+  color:black;
+
+  font-weight:bold;
+
+  box-shadow:
+  0 0 20px #00ffff;
+
+}
+
+.seat-container{
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:10px;
+
+}
+
+.seat-row{
+
+  display:flex;
+
+  gap:10px;
+
+}
+
+.seat{
+
+  width:35px;
+
+  height:35px;
+
+  border-radius:8px;
+
+  cursor:pointer;
+
+  transition:0.3s;
+
+}
+
+/* AVAILABLE */
+
+.seat.available{
+
+  background:white;
+
+}
+
+/* SELECTED */
+
+.seat.selected{
+
+  background:#00ff66;
+
+  box-shadow:
+  0 0 10px #00ff66;
+
+}
+
+/* BOOKED */
+
+.seat.booked{
+
+  background:red;
+
+  cursor:not-allowed;
+
+}
+
+/* WALKWAY */
+
+.walkway{
+
+  width:30px;
+
+}
+
+/* HOVER */
+
+.seat.available:hover{
+
+  transform:scale(1.1);
+
+  box-shadow:
+  0 0 10px white;
+
+}
