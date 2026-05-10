@@ -29,7 +29,8 @@ if(registerBtn){
 
     try {
 
-      const userCredential = await createUserWithEmailAndPassword(
+      const userCredential =
+      await createUserWithEmailAndPassword(
         auth,
         email,
         password
@@ -54,4 +55,102 @@ if(registerBtn){
     }
 
   });
+
+}
+
+// LOGIN
+const loginBtn = document.getElementById('loginBtn');
+
+if(loginBtn){
+
+  loginBtn.addEventListener('click', async () => {
+
+    const email =
+    document.getElementById('loginEmail').value;
+
+    const password =
+    document.getElementById('loginPassword').value;
+
+    try {
+
+      const userCredential =
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      const userDoc =
+      await getDoc(doc(db, 'users', user.uid));
+
+      const userData = userDoc.data();
+
+      if(userData.role === 'admin'){
+        window.location = 'admin.html';
+      } else {
+        window.location = 'dashboard.html';
+      }
+
+    } catch(error){
+      alert(error.message);
+    }
+
+  });
+
+}
+
+// SHOW PASSWORD
+const togglePassword =
+document.getElementById('togglePassword');
+
+if(togglePassword){
+
+  togglePassword.addEventListener('click', () => {
+
+    const password =
+    document.getElementById('password');
+
+    if(password.type === 'password'){
+
+      password.type = 'text';
+      togglePassword.innerText = 'Hide';
+
+    } else {
+
+      password.type = 'password';
+      togglePassword.innerText = 'Show';
+
+    }
+
+  });
+
+}
+
+// SHOW LOGIN PASSWORD
+const toggleLoginPassword =
+document.getElementById('toggleLoginPassword');
+
+if(toggleLoginPassword){
+
+  toggleLoginPassword.addEventListener('click', () => {
+
+    const password =
+    document.getElementById('loginPassword');
+
+    if(password.type === 'password'){
+
+      password.type = 'text';
+      toggleLoginPassword.innerText = 'Hide';
+
+    } else {
+
+      password.type = 'password';
+      toggleLoginPassword.innerText = 'Show';
+
+    }
+
+  });
+
 }
