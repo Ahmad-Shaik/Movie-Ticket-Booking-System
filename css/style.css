@@ -182,3 +182,13 @@ button:disabled{
 
   color:white !important;
 }
+
+.form-label{
+
+  color:#00ffff;
+
+  font-weight:600;
+
+  margin-bottom:8px;
+
+}
