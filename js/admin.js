@@ -14,7 +14,8 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  setDoc
+  setDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // ======================
@@ -36,7 +37,10 @@ document.getElementById('usersTable');
 const saveUpiBtn =
 document.getElementById('saveUpiBtn');
 
+// ======================
 // SECTIONS
+// ======================
+
 const moviesSection =
 document.getElementById('moviesSection');
 
@@ -46,7 +50,10 @@ document.getElementById('usersSection');
 const upiSection =
 document.getElementById('upiSection');
 
+// ======================
 // TAB BUTTONS
+// ======================
+
 const moviesTabBtn =
 document.getElementById('moviesTabBtn');
 
@@ -55,6 +62,12 @@ document.getElementById('usersTabBtn');
 
 const upiTabBtn =
 document.getElementById('upiTabBtn');
+
+// ======================
+// EDITING MODE
+// ======================
+
+let editingMovieId = null;
 
 // ======================
 // AUTH CHECK
@@ -133,7 +146,7 @@ upiTabBtn.addEventListener('click', () => {
 });
 
 // ======================
-// ADD MOVIE
+// ADD / UPDATE MOVIE
 // ======================
 
 addMovieBtn.addEventListener('click', async () => {
@@ -185,66 +198,133 @@ addMovieBtn.addEventListener('click', async () => {
 
   addMovieBtn.disabled = true;
 
-  addMovieBtn.innerHTML =
-  'Adding Movie...';
+  // ======================
+  // UPDATE MODE
+  // ======================
 
-  try {
-
-    await addDoc(collection(db, 'movies'), {
-
-      movieName,
-      posterUrl,
-      place,
-      theater,
-
-      ticketPrice:
-      Number(ticketPrice),
-
-      rows:
-      Number(rows),
-
-      cols:
-      Number(cols),
-
-      walkwayAfter:
-      Number(walkwayAfter),
-
-      walkwayType,
-
-      startDate,
-
-      showTime,
-
-      active: true,
-
-      createdAt:
-      new Date()
-
-    });
+  if(editingMovieId){
 
     addMovieBtn.innerHTML =
-    'Movie Added ✓';
+    'Updating Movie...';
 
-    loadMovies();
+    try {
 
-    setTimeout(() => {
+      await setDoc(
+        doc(db, 'movies', editingMovieId),
+        {
 
-      location.reload();
+          movieName,
+          posterUrl,
+          place,
+          theater,
 
-    }, 1000);
+          ticketPrice:
+          Number(ticketPrice),
 
-  } catch(error){
+          rows:
+          Number(rows),
 
-    console.log(error);
+          cols:
+          Number(cols),
 
-    alert(error.message);
+          walkwayAfter:
+          Number(walkwayAfter),
 
-    addMovieBtn.disabled = false;
+          walkwayType,
 
-    addMovieBtn.innerHTML =
-    'Add Movie';
+          startDate,
+
+          showTime,
+
+          active:true
+
+        }
+
+      );
+
+      addMovieBtn.innerHTML =
+      'Movie Updated ✓';
+
+      editingMovieId = null;
+
+      clearMovieForm();
+
+      loadMovies();
+
+    } catch(error){
+
+      console.log(error);
+
+      alert(error.message);
+
+    }
 
   }
+
+  // ======================
+  // ADD MODE
+  // ======================
+
+  else {
+
+    addMovieBtn.innerHTML =
+    'Adding Movie...';
+
+    try {
+
+      await addDoc(collection(db, 'movies'), {
+
+        movieName,
+        posterUrl,
+        place,
+        theater,
+
+        ticketPrice:
+        Number(ticketPrice),
+
+        rows:
+        Number(rows),
+
+        cols:
+        Number(cols),
+
+        walkwayAfter:
+        Number(walkwayAfter),
+
+        walkwayType,
+
+        startDate,
+
+        showTime,
+
+        active:true,
+
+        createdAt:
+        new Date()
+
+      });
+
+      addMovieBtn.innerHTML =
+      'Movie Added ✓';
+
+      clearMovieForm();
+
+      loadMovies();
+
+    } catch(error){
+
+      console.log(error);
+
+      alert(error.message);
+
+    }
+
+  }
+
+  addMovieBtn.disabled = false;
+
+  addMovieBtn.innerHTML =
+  'Add Movie';
 
 });
 
@@ -343,6 +423,82 @@ async function loadMovies(){
   });
 
 }
+
+// ======================
+// EDIT MOVIE
+// ======================
+
+window.editMovie =
+async (id) => {
+
+  const movieRef =
+  doc(db, 'movies', id);
+
+  const movieSnap =
+  await getDoc(movieRef);
+
+  if(!movieSnap.exists()){
+
+    return;
+  }
+
+  const movie =
+  movieSnap.data();
+
+  editingMovieId = id;
+
+  // AUTO FILL FORM
+
+  document.getElementById('movieName').value =
+  movie.movieName;
+
+  document.getElementById('posterUrl').value =
+  movie.posterUrl;
+
+  document.getElementById('place').value =
+  movie.place;
+
+  document.getElementById('theater').value =
+  movie.theater;
+
+  document.getElementById('ticketPrice').value =
+  movie.ticketPrice;
+
+  document.getElementById('rows').value =
+  movie.rows;
+
+  document.getElementById('cols').value =
+  movie.cols;
+
+  document.getElementById('walkwayAfter').value =
+  movie.walkwayAfter;
+
+  document.getElementById('walkwayType').value =
+  movie.walkwayType;
+
+  document.getElementById('startDate').value =
+  movie.startDate;
+
+  document.getElementById('showTime').value =
+  movie.showTime;
+
+  // CHANGE BUTTON
+
+  addMovieBtn.innerHTML =
+  'Update Movie';
+
+  // SCROLL TOP
+
+  window.scrollTo({
+
+    top:0,
+
+    behavior:'smooth'
+
+  });
+
+};
+
 // ======================
 // DELETE MOVIE
 // ======================
@@ -363,96 +519,6 @@ async (id) => {
   );
 
   loadMovies();
-
-};
-
-window.editMovie =
-async (id) => {
-
-  const movieName =
-  prompt('Enter New Movie Name');
-
-  if(!movieName){
-
-    return;
-  }
-
-  const place =
-  prompt('Enter New Place');
-
-  const theater =
-  prompt('Enter New Theater');
-
-  const ticketPrice =
-  prompt('Enter New Ticket Price');
-
-  const showTime =
-  prompt('Enter New Show Time');
-
-  const posterUrl =
-  prompt('Enter New Poster URL');
-
-  const rows =
-  prompt('Enter Rows');
-
-  const cols =
-  prompt('Enter Columns');
-
-  const walkwayAfter =
-  prompt('Walkway After Seats');
-
-  const walkwayType =
-  prompt('Walkway Type vertical/horizontal');
-
-  const startDate =
-  prompt('Movie Start Date');
-
-  try {
-
-    await setDoc(
-      doc(db, 'movies', id),
-      {
-
-        movieName,
-        place,
-        theater,
-        ticketPrice:
-        Number(ticketPrice),
-
-        showTime,
-
-        posterUrl,
-
-        rows:
-        Number(rows),
-
-        cols:
-        Number(cols),
-
-        walkwayAfter:
-        Number(walkwayAfter),
-
-        walkwayType,
-
-        startDate,
-
-        active:true
-
-      }
-
-    );
-
-    alert('Movie Updated');
-
-    loadMovies();
-
-  } catch(error){
-
-    console.log(error);
-
-    alert(error.message);
-
-  }
 
 };
 
@@ -522,3 +588,31 @@ saveUpiBtn.addEventListener('click', async () => {
   alert('UPI Updated');
 
 });
+
+// ======================
+// CLEAR FORM
+// ======================
+
+function clearMovieForm(){
+
+  document.getElementById('movieName').value = '';
+
+  document.getElementById('posterUrl').value = '';
+
+  document.getElementById('place').value = '';
+
+  document.getElementById('theater').value = '';
+
+  document.getElementById('ticketPrice').value = '';
+
+  document.getElementById('rows').value = '';
+
+  document.getElementById('cols').value = '';
+
+  document.getElementById('walkwayAfter').value = '';
+
+  document.getElementById('startDate').value = '';
+
+  document.getElementById('showTime').value = '';
+
+}
