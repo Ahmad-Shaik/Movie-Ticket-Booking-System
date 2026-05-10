@@ -320,3 +320,121 @@ button:disabled{
 
 }
 
+/* ======================
+   GLOBAL TEXT FIX
+====================== */
+
+body{
+
+  background:#020617;
+
+  color:white;
+
+}
+
+/* ======================
+   FORM LABELS
+====================== */
+
+.form-label{
+
+  color:#00ffff;
+
+  font-weight:600;
+
+}
+
+/* ======================
+   INPUT TEXT FIX
+====================== */
+
+.form-control{
+
+  color:white !important;
+
+}
+
+.form-control::placeholder{
+
+  color:#94a3b8 !important;
+
+}
+
+/* ======================
+   SELECT DROPDOWN FIX
+====================== */
+
+select{
+
+  color:white !important;
+
+}
+
+select option{
+
+  background:#081120;
+
+  color:white;
+
+}
+
+/* ======================
+   TABLE TEXT
+====================== */
+
+table{
+
+  color:white !important;
+
+}
+
+/* ======================
+   CARD TEXT
+====================== */
+
+.neon-card{
+
+  color:white;
+
+}
+
+/* ======================
+   PARAGRAPH FIX
+====================== */
+
+p{
+
+  color:white;
+
+}
+
+/* ======================
+   SEARCH + FILTERS
+====================== */
+
+#searchInput,
+#placeFilter,
+#theaterFilter{
+
+  background:#081120 !important;
+
+  border:2px solid #00ffff !important;
+
+  color:white !important;
+
+}
+
+/* ======================
+   NAVBAR / USERNAME
+====================== */
+
+#userName{
+
+  color:#00ffff;
+
+  font-weight:bold;
+
+  text-shadow:
+  0 0 10px #00ffff;
+
+}
