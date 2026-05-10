@@ -1,35 +1,76 @@
 body{
-  background: #111827;
+  background: #050816;
   color: white;
   font-family: Arial, sans-serif;
 }
 
 .card{
-  background: #1f2937;
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid #00ffff;
+  border-radius: 20px;
+  box-shadow:
+    0 0 10px #00ffff,
+    0 0 20px #00ffff33;
+}
+
+input,
+textarea,
+select{
+  background: #111827 !important;
+  color: white !important;
+  border: 1px solid #00ffff !important;
+}
+
+input::placeholder,
+textarea::placeholder{
+  color: #aaa !important;
+}
+
+.form-control:focus{
+  box-shadow:
+    0 0 10px #00ffff !important;
+  border-color: #00ffff !important;
+}
+
+.btn-primary{
+  background: #00ffff;
   border: none;
-  border-radius: 15px;
+  color: black;
+  font-weight: bold;
 }
 
-.form-control,
-textarea{
-  background: #374151;
-  color: white;
-  border: none;
+.btn-primary:hover{
+  background: #00cccc;
 }
 
-.form-control:focus,
-textarea:focus{
-  background: #374151;
-  color: white;
-  box-shadow: none;
-}
-
-.btn-primary,
 .btn-success{
-  border-radius: 10px;
+  background: #00ff99;
+  border: none;
+  color: black;
+  font-weight: bold;
+}
+
+.btn-success:hover{
+  background: #00cc77;
+}
+
+.btn-warning{
+  background: #ffcc00;
+  border: none;
+  color: black;
+}
+
+.btn-danger{
+  background: #ff0066;
+  border: none;
+}
+
+h1,h2,h3,h4,h5{
+  color: #00ffff;
+  text-shadow:
+    0 0 10px #00ffff;
 }
 
 a{
-  color: #60a5fa;
   text-decoration: none;
 }

@@ -21,11 +21,31 @@ if(registerBtn){
 
   registerBtn.addEventListener('click', async () => {
 
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    const password = document.getElementById('password').value;
+    const name =
+    document.getElementById('name').value.trim();
+
+    const email =
+    document.getElementById('email').value.trim();
+
+    const phone =
+    document.getElementById('phone').value.trim();
+
+    const address =
+    document.getElementById('address').value.trim();
+
+    const password =
+    document.getElementById('password').value;
+
+    if(
+      !name ||
+      !email ||
+      !phone ||
+      !address ||
+      !password
+    ){
+      alert('Please Fill All Fields');
+      return;
+    }
 
     try {
 
@@ -38,20 +58,27 @@ if(registerBtn){
 
       const user = userCredential.user;
 
+      // SAVE USER DATA
       await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
         name,
         email,
         phone,
         address,
-        role: 'user'
+        role: 'user',
+        createdAt: new Date()
       });
 
       alert('Registration Successful');
 
-      window.location = 'index.html';
+      window.location.href = 'index.html';
 
     } catch(error){
+
+      console.log(error);
+
       alert(error.message);
+
     }
 
   });
@@ -66,10 +93,15 @@ if(loginBtn){
   loginBtn.addEventListener('click', async () => {
 
     const email =
-    document.getElementById('loginEmail').value;
+    document.getElementById('loginEmail').value.trim();
 
     const password =
     document.getElementById('loginPassword').value;
+
+    if(!email || !password){
+      alert('Enter Email & Password');
+      return;
+    }
 
     try {
 
@@ -82,26 +114,52 @@ if(loginBtn){
 
       const user = userCredential.user;
 
-      const userDoc =
-      await getDoc(doc(db, 'users', user.uid));
+      // GET USER DATA
+      const userRef = doc(db, 'users', user.uid);
 
-      const userData = userDoc.data();
+      const userSnap = await getDoc(userRef);
 
+      // IF USER DATA MISSING
+      if(!userSnap.exists()){
+
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          role: 'user',
+          createdAt: new Date()
+        });
+
+      }
+
+      const userData =
+      (await getDoc(userRef)).data();
+
+      alert('Login Successful');
+
+      // REDIRECT
       if(userData.role === 'admin'){
-        window.location = 'admin.html';
+
+        window.location.href = 'admin.html';
+
       } else {
-        window.location = 'dashboard.html';
+
+        window.location.href = 'dashboard.html';
+
       }
 
     } catch(error){
+
+      console.log(error);
+
       alert(error.message);
+
     }
 
   });
 
 }
 
-// SHOW PASSWORD
+// SHOW REGISTER PASSWORD
 const togglePassword =
 document.getElementById('togglePassword');
 
