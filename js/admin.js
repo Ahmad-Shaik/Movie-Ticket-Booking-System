@@ -270,7 +270,7 @@ async function loadMovies(){
 
       <div class="col-md-4 mb-4">
 
-        <div class="card movie-card p-3 h-100">
+        <div class="neon-card movie-card p-3 h-100">
 
           <img
             src="${movie.posterUrl}"
@@ -281,7 +281,7 @@ async function loadMovies(){
             "
           >
 
-          <h4>
+          <h4 class="neon-heading">
             ${movie.movieName}
           </h4>
 
@@ -309,15 +309,30 @@ async function loadMovies(){
           </p>
 
           <p>
+            📅 ${movie.startDate}
+          </p>
+
+          <p>
             🕒 ${movie.showTime}
           </p>
 
-          <button
-            class="btn btn-danger"
-            onclick="deleteMovie('${movie.id}')"
-          >
-            Delete
-          </button>
+          <div class="d-flex gap-2 mt-3">
+
+            <button
+              class="btn neon-btn-green w-50"
+              onclick="editMovie('${movie.id}')"
+            >
+              Edit
+            </button>
+
+            <button
+              class="btn btn-danger w-50"
+              onclick="deleteMovie('${movie.id}')"
+            >
+              Delete
+            </button>
+
+          </div>
 
         </div>
 
@@ -328,7 +343,6 @@ async function loadMovies(){
   });
 
 }
-
 // ======================
 // DELETE MOVIE
 // ======================
