@@ -63,6 +63,12 @@ document.getElementById('addMovieBtn');
 const moviesContainer =
 document.getElementById('moviesContainer');
 
+const usersTableBody =
+document.getElementById('usersTableBody');
+
+const bookingsTableBody =
+document.getElementById('bookingsTableBody');
+
 const logoutBtn =
 document.getElementById('logoutBtn');
 
@@ -192,8 +198,6 @@ addMovieBtn.addEventListener(
 
       }
 
-      // RESET
-
       editMovieId = null;
 
       addMovieBtn.innerHTML =
@@ -296,6 +300,108 @@ async function loadMovies(){
         </div>
 
       </div>
+
+    `;
+
+  });
+
+}
+
+// ======================
+// LOAD USERS
+// ======================
+
+async function loadUsers(){
+
+  usersTableBody.innerHTML = '';
+
+  const querySnapshot =
+  await getDocs(
+    collection(db, 'users')
+  );
+
+  querySnapshot.forEach((docSnap) => {
+
+    const user = docSnap.data();
+
+    usersTableBody.innerHTML += `
+
+      <tr>
+
+        <td>${user.name || ''}</td>
+
+        <td>${user.email || ''}</td>
+
+        <td>${user.phone || ''}</td>
+
+        <td>${user.address || ''}</td>
+
+        <td>${user.role || 'user'}</td>
+
+      </tr>
+
+    `;
+
+  });
+
+}
+
+// ======================
+// LOAD BOOKINGS
+// ======================
+
+async function loadBookings(){
+
+  bookingsTableBody.innerHTML = '';
+
+  const querySnapshot =
+  await getDocs(
+    collection(db, 'bookings')
+  );
+
+  querySnapshot.forEach((docSnap) => {
+
+    const booking = docSnap.data();
+
+    bookingsTableBody.innerHTML += `
+
+      <tr>
+
+        <td>
+          ${booking.userName || ''}
+        </td>
+
+        <td>
+          ${booking.movieName || ''}
+        </td>
+
+        <td>
+          ${booking.theater || ''}
+        </td>
+
+        <td>
+          ${
+            booking.selectedSeats
+            ?
+            booking.selectedSeats.join(', ')
+            :
+            ''
+          }
+        </td>
+
+        <td>
+          ${booking.showDate || ''}
+        </td>
+
+        <td>
+          ${booking.showTime || ''}
+        </td>
+
+        <td>
+          ₹${booking.totalAmount || 0}
+        </td>
+
+      </tr>
 
     `;
 
@@ -433,3 +539,7 @@ saveUpiBtn.addEventListener(
 // ======================
 
 loadMovies();
+
+loadUsers();
+
+loadBookings();
