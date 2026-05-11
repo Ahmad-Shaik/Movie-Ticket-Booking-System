@@ -42,13 +42,11 @@
         👑 ADMIN PANEL
       </h2>
 
-      <div
-        class="neon-card p-3 mb-4 text-center"
-      >
+      <div class="neon-card p-3 text-center mb-4">
 
         <h5
           id="adminName"
-          class="text-light m-0"
+          class="m-0 text-light"
         >
           👑 ADMIN
         </h5>
@@ -70,22 +68,16 @@
 
       <!-- TITLE -->
 
-      <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h1 class="neon-heading">
-          🎬 Movie Management
-        </h1>
-
-      </div>
+      <h1 class="neon-heading mb-4">
+        🎬 Movie Management
+      </h1>
 
       <!-- ADD / UPDATE MOVIE -->
 
       <div class="neon-card p-4 mb-5">
 
         <h3 class="neon-heading mb-4">
-
           ➕ Add / Update Movie
-
         </h3>
 
         <div class="row">
@@ -102,7 +94,7 @@
               type="text"
               id="movieName"
               class="form-control neon-input"
-              placeholder="Enter Movie Name"
+              placeholder="Movie Name"
             >
 
           </div>
@@ -119,7 +111,7 @@
               type="text"
               id="posterUrl"
               class="form-control neon-input"
-              placeholder="Enter Poster URL"
+              placeholder="Poster URL"
             >
 
           </div>
@@ -136,7 +128,7 @@
               type="text"
               id="place"
               class="form-control neon-input"
-              placeholder="Enter Place"
+              placeholder="Place"
             >
 
           </div>
@@ -153,7 +145,7 @@
               type="text"
               id="theater"
               class="form-control neon-input"
-              placeholder="Enter Theater"
+              placeholder="Theater"
             >
 
           </div>
@@ -170,7 +162,7 @@
               type="number"
               id="ticketPrice"
               class="form-control neon-input"
-              placeholder="Enter Ticket Price"
+              placeholder="Ticket Price"
             >
 
           </div>
@@ -187,7 +179,6 @@
               type="number"
               id="rows"
               class="form-control neon-input"
-              placeholder="Rows"
             >
 
           </div>
@@ -204,12 +195,11 @@
               type="number"
               id="cols"
               class="form-control neon-input"
-              placeholder="Columns"
             >
 
           </div>
 
-          <!-- WALKWAY TYPE -->
+          <!-- WALKWAY -->
 
           <div class="col-md-3 mb-3">
 
@@ -246,7 +236,7 @@
               type="number"
               id="walkwayAfter"
               class="form-control neon-input"
-              placeholder="Ex: 5"
+              placeholder="5"
             >
 
           </div>
@@ -283,7 +273,7 @@
 
           </div>
 
-          <!-- BOOKING OPEN DAYS -->
+          <!-- BOOKING OPEN -->
 
           <div class="col-md-4 mb-3">
 
@@ -295,7 +285,6 @@
               type="number"
               id="bookingOpenDays"
               class="form-control neon-input"
-              placeholder="1"
               value="1"
             >
 
@@ -314,19 +303,15 @@
 
       </div>
 
-      <!-- PAYMENT SETTINGS -->
+      <!-- UPI SETTINGS -->
 
       <div class="neon-card p-4 mb-5">
 
         <h3 class="neon-heading mb-4">
-
-          💳 UPI Payment Settings
-
+          💳 UPI Settings
         </h3>
 
         <div class="row">
-
-          <!-- UPI ID -->
 
           <div class="col-md-6 mb-3">
 
@@ -343,8 +328,6 @@
 
           </div>
 
-          <!-- UPI NAME -->
-
           <div class="col-md-6 mb-3">
 
             <label class="form-label text-light">
@@ -355,7 +338,7 @@
               type="text"
               id="upiName"
               class="form-control neon-input"
-              placeholder="Enter Name"
+              placeholder="Name"
             >
 
           </div>
@@ -378,9 +361,81 @@
       </h2>
 
       <div
-        class="row"
+        class="row mb-5"
         id="moviesContainer"
       ></div>
+
+      <!-- USERS -->
+
+      <h2 class="neon-heading mb-4">
+        👥 Registered Users
+      </h2>
+
+      <div class="table-responsive neon-card p-3 mb-5">
+
+        <table class="table table-dark table-bordered align-middle">
+
+          <thead>
+
+            <tr>
+
+              <th>Name</th>
+
+              <th>Email</th>
+
+              <th>Phone</th>
+
+              <th>Address</th>
+
+              <th>Role</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="usersTableBody"></tbody>
+
+        </table>
+
+      </div>
+
+      <!-- BOOKINGS -->
+
+      <h2 class="neon-heading mb-4">
+        🎟 Booking Data
+      </h2>
+
+      <div class="table-responsive neon-card p-3">
+
+        <table class="table table-dark table-bordered align-middle">
+
+          <thead>
+
+            <tr>
+
+              <th>User</th>
+
+              <th>Movie</th>
+
+              <th>Theater</th>
+
+              <th>Seats</th>
+
+              <th>Date</th>
+
+              <th>Time</th>
+
+              <th>Amount</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="bookingsTableBody"></tbody>
+
+        </table>
+
+      </div>
 
     </div>
 
