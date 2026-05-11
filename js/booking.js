@@ -367,29 +367,30 @@ function renderSeats(){
   seatContainer.innerHTML = '';
 
   const totalRows =
-  parseInt(movie.rows) || 10;
+  Number(movie.rows) || 10;
 
   const totalCols =
-  parseInt(movie.cols) || 12;
-
-  // ADMIN DYNAMIC WALKWAYS
+  Number(movie.cols) || 12;
 
   // Example:
   // [4,8]
-  // Means walkway AFTER 4 and AFTER 8
+  // gap AFTER 4
+  // gap AFTER 8
 
   const walkways =
-  movie.walkways || [];
+  Array.isArray(movie.walkways)
+  ? movie.walkways
+  : [];
 
   // SCREEN
 
-  const screen =
+  const screenDiv =
   document.createElement('div');
 
-  screen.className =
+  screenDiv.className =
   'text-center mb-5';
 
-  screen.innerHTML = `
+  screenDiv.innerHTML = `
 
     <div
       style="
@@ -400,7 +401,7 @@ function renderSeats(){
         padding:12px;
         border-radius:100px;
         font-weight:bold;
-        box-shadow:0 0 30px #00e5ff;
+        box-shadow:0 0 25px #00e5ff;
       "
     >
       SCREEN THIS WAY
@@ -408,9 +409,9 @@ function renderSeats(){
 
   `;
 
-  seatContainer.appendChild(screen);
+  seatContainer.appendChild(screenDiv);
 
-  // ROWS
+  // ROW LOOP
 
   for(
     let r = 1;
@@ -422,25 +423,25 @@ function renderSeats(){
     document.createElement('div');
 
     rowDiv.className =
-    'd-flex justify-content-center align-items-center mb-2 flex-nowrap';
+    'd-flex justify-content-center align-items-center mb-2';
 
-    // ROW LABEL
+    // ROW NAME
 
     const rowLabel =
     document.createElement('div');
 
-    rowLabel.className =
-    'text-light fw-bold me-3';
-
     rowLabel.style.width =
     '30px';
+
+    rowLabel.className =
+    'text-light fw-bold me-3';
 
     rowLabel.innerHTML =
     String.fromCharCode(64 + r);
 
     rowDiv.appendChild(rowLabel);
 
-    // SEATS
+    // SEAT LOOP
 
     for(
       let c = 1;
@@ -449,24 +450,21 @@ function renderSeats(){
     ){
 
       const seatId =
-      `${String.fromCharCode(64 + r)}${c}`;
+      `${String.fromCharCode(64+r)}${c}`;
 
-      const btn =
+      const seatBtn =
       document.createElement('button');
 
-      btn.className =
+      seatBtn.innerHTML = c;
+
+      seatBtn.className =
       'btn seat-btn mx-1';
 
-      btn.style.width =
+      seatBtn.style.width =
       '42px';
 
-      btn.style.height =
+      seatBtn.style.height =
       '42px';
-
-      btn.style.fontSize =
-      '13px';
-
-      btn.innerHTML = c;
 
       // BOOKED
 
@@ -474,11 +472,11 @@ function renderSeats(){
         bookedSeats.includes(seatId)
       ){
 
-        btn.classList.add(
+        seatBtn.classList.add(
           'btn-danger'
         );
 
-        btn.disabled = true;
+        seatBtn.disabled = true;
 
       }
 
@@ -488,7 +486,7 @@ function renderSeats(){
         selectedSeats.includes(seatId)
       ){
 
-        btn.classList.add(
+        seatBtn.classList.add(
           'btn-success'
         );
 
@@ -498,13 +496,13 @@ function renderSeats(){
 
       else{
 
-        btn.classList.add(
+        seatBtn.classList.add(
           'btn-outline-light'
         );
 
       }
 
-      btn.addEventListener(
+      seatBtn.addEventListener(
 
         'click',
 
@@ -512,32 +510,20 @@ function renderSeats(){
 
       );
 
-      rowDiv.appendChild(btn);
+      rowDiv.appendChild(seatBtn);
 
-      // WALKWAY AFTER SEAT
+      // GAP AFTER SPECIFIED SEAT
 
       if(
         walkways.includes(c)
       ){
 
-        const walkway =
+        const gap =
         document.createElement('div');
 
-        // CENTER GAP BIGGER
+        gap.style.width = '50px';
 
-        const middleWalkway =
-        walkways[
-          Math.floor(
-            walkways.length / 2
-          )
-        ];
-
-        walkway.style.width =
-        c === middleWalkway
-        ? '60px'
-        : '25px';
-
-        rowDiv.appendChild(walkway);
+        rowDiv.appendChild(gap);
 
       }
 
@@ -548,6 +534,7 @@ function renderSeats(){
   }
 
 }
+
 // ======================
 // TOGGLE SEATS
 // ======================
