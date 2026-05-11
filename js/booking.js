@@ -367,15 +367,50 @@ function renderSeats(){
   seatContainer.innerHTML = '';
 
   const totalRows =
-  movie.rows || 10;
+  parseInt(movie.rows) || 10;
 
   const totalCols =
-  movie.cols || 16;
+  parseInt(movie.cols) || 12;
 
-  // DYNAMIC WALKWAYS FROM ADMIN
+  // ADMIN DYNAMIC WALKWAYS
+
+  // Example:
+  // [4,8]
+  // Means walkway AFTER 4 and AFTER 8
 
   const walkways =
   movie.walkways || [];
+
+  // SCREEN
+
+  const screen =
+  document.createElement('div');
+
+  screen.className =
+  'text-center mb-5';
+
+  screen.innerHTML = `
+
+    <div
+      style="
+        width:70%;
+        margin:auto;
+        background:#00e5ff;
+        color:black;
+        padding:12px;
+        border-radius:100px;
+        font-weight:bold;
+        box-shadow:0 0 30px #00e5ff;
+      "
+    >
+      SCREEN THIS WAY
+    </div>
+
+  `;
+
+  seatContainer.appendChild(screen);
+
+  // ROWS
 
   for(
     let r = 1;
@@ -383,11 +418,11 @@ function renderSeats(){
     r++
   ){
 
-    const row =
+    const rowDiv =
     document.createElement('div');
 
-    row.className =
-    'd-flex justify-content-center align-items-center mb-2 flex-wrap';
+    rowDiv.className =
+    'd-flex justify-content-center align-items-center mb-2 flex-nowrap';
 
     // ROW LABEL
 
@@ -403,7 +438,9 @@ function renderSeats(){
     rowLabel.innerHTML =
     String.fromCharCode(64 + r);
 
-    row.appendChild(rowLabel);
+    rowDiv.appendChild(rowLabel);
+
+    // SEATS
 
     for(
       let c = 1;
@@ -411,57 +448,25 @@ function renderSeats(){
       c++
     ){
 
-      // CREATE WALKWAYS
-
-      if(
-        walkways.includes(c)
-      ){
-
-        const gap =
-        document.createElement('div');
-
-        // CENTER GAP BIGGER
-
-        if(
-          c === walkways[
-            Math.floor(
-              walkways.length / 2
-            )
-          ]
-        ){
-
-          gap.style.width =
-          '60px';
-
-        }
-
-        else{
-
-          gap.style.width =
-          '25px';
-
-        }
-
-        row.appendChild(gap);
-
-      }
-
       const seatId =
       `${String.fromCharCode(64 + r)}${c}`;
 
       const btn =
       document.createElement('button');
 
-      btn.innerHTML = c;
-
       btn.className =
-      'btn seat-btn m-1';
+      'btn seat-btn mx-1';
 
       btn.style.width =
-      '45px';
+      '42px';
 
       btn.style.height =
-      '45px';
+      '42px';
+
+      btn.style.fontSize =
+      '13px';
+
+      btn.innerHTML = c;
 
       // BOOKED
 
@@ -507,16 +512,42 @@ function renderSeats(){
 
       );
 
-      row.appendChild(btn);
+      rowDiv.appendChild(btn);
+
+      // WALKWAY AFTER SEAT
+
+      if(
+        walkways.includes(c)
+      ){
+
+        const walkway =
+        document.createElement('div');
+
+        // CENTER GAP BIGGER
+
+        const middleWalkway =
+        walkways[
+          Math.floor(
+            walkways.length / 2
+          )
+        ];
+
+        walkway.style.width =
+        c === middleWalkway
+        ? '60px'
+        : '25px';
+
+        rowDiv.appendChild(walkway);
+
+      }
 
     }
 
-    seatContainer.appendChild(row);
+    seatContainer.appendChild(rowDiv);
 
   }
 
 }
-
 // ======================
 // TOGGLE SEATS
 // ======================
