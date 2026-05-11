@@ -4,509 +4,422 @@ import {
 } from './firebase.js';
 
 import {
-  doc,
-  getDoc,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
   collection,
-  addDoc,
-  getDocs
+  getDocs,
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-// ======================
-// URL PARAMS
-// ======================
-
-const urlParams =
-new URLSearchParams(window.location.search);
-
-const movieId =
-urlParams.get('id');
 
 // ======================
 // ELEMENTS
 // ======================
 
-const movieInfo =
-document.getElementById('movieInfo');
+const moviesContainer =
+document.getElementById('moviesContainer');
 
-const seatContainer =
-document.getElementById('seatContainer');
+const logoutBtn =
+document.getElementById('logoutBtn');
 
-const selectedSeatsText =
-document.getElementById('selectedSeatsText');
+const searchInput =
+document.getElementById('searchInput');
 
-const totalPriceText =
-document.getElementById('totalPrice');
+const placeFilter =
+document.getElementById('placeFilter');
 
-const confirmBookingBtn =
-document.getElementById('confirmBookingBtn');
+const theaterFilter =
+document.getElementById('theaterFilter');
 
-const bookingDate =
-document.getElementById('bookingDate');
-
-const bookingTime =
-document.getElementById('bookingTime');
-
-const qrCode =
-document.getElementById('qrCode');
-
-const upiText =
-document.getElementById('upiText');
+const userName =
+document.getElementById('userName');
 
 // ======================
-// VARIABLES
+// DATA
 // ======================
 
-let movieData = null;
-
-let selectedSeats = [];
-
-let bookedSeats = [];
+let allMovies = [];
 
 // ======================
-// LOAD MOVIE
+// AUTH CHECK
 // ======================
 
-async function loadMovie(){
+onAuthStateChanged(auth, async (user) => {
 
-  if(!movieId){
+  if(!user){
 
-    movieInfo.innerHTML = `
-      <h3 class="text-danger">
-        Movie Not Found
-      </h3>
-    `;
+    window.location.href =
+    './index.html';
 
     return;
   }
 
-  const movieRef =
-  doc(db, 'movies', movieId);
+  loadUserData(user.uid);
 
-  const movieSnap =
-  await getDoc(movieRef);
+  loadMovies();
 
-  if(!movieSnap.exists()){
+});
 
-    movieInfo.innerHTML = `
-      <h3 class="text-danger">
-        Invalid Movie
-      </h3>
-    `;
+// ======================
+// LOAD USER DATA
+// ======================
 
-    return;
+async function loadUserData(uid){
+
+  try {
+
+    const userRef =
+    doc(db, 'users', uid);
+
+    const userSnap =
+    await getDoc(userRef);
+
+    if(userSnap.exists()){
+
+      const user =
+      userSnap.data();
+
+      if(user.role === 'admin'){
+
+        userName.innerHTML =
+        '👑 ADMIN';
+
+      }
+
+      else {
+
+        userName.innerHTML =
+        `👤 ${user.name}`;
+
+      }
+
+    }
+
+  } catch(error){
+
+    console.log(error);
+
   }
-
-  movieData =
-  movieSnap.data();
-
-  // MOVIE INFO
-
-  movieInfo.innerHTML = `
-
-    <div class="row">
-
-      <div class="col-md-4">
-
-        <img
-          src="${movieData.posterUrl}"
-          class="img-fluid rounded"
-        >
-
-      </div>
-
-      <div class="col-md-8">
-
-        <h2 class="neon-heading">
-          ${movieData.movieName}
-        </h2>
-
-        <p>
-          📍 ${movieData.place}
-        </p>
-
-        <p>
-          🎬 ${movieData.theater}
-        </p>
-
-        <p>
-          💰 ₹${movieData.ticketPrice}
-        </p>
-
-        <p>
-          🕒 ${movieData.showTime}
-        </p>
-
-      </div>
-
-    </div>
-
-  `;
-
-  // DATE + TIME
-
-  bookingTime.value =
-  movieData.showTime;
-
-  bookingDate.min =
-  movieData.startDate;
-
-  // LOAD DATA
-
-  await loadBookedSeats();
-
-  generateSeats();
-
-  loadUpi();
 
 }
 
 // ======================
-// LOAD BOOKED SEATS
+// LOGOUT
 // ======================
 
-async function loadBookedSeats(){
+logoutBtn.addEventListener(
+  'click',
+  async () => {
 
-  bookedSeats = [];
+    await signOut(auth);
 
-  const querySnapshot =
-  await getDocs(collection(db, 'bookings'));
+    window.location.href =
+    './index.html';
 
-  querySnapshot.forEach((docSnap) => {
+  }
+);
 
-    const booking =
-    docSnap.data();
+// ======================
+// LOAD MOVIES
+// ======================
 
-    if(
-      booking.movieId === movieId
-    ){
+async function loadMovies(){
 
-      booking.seats.forEach(seat => {
+  try {
 
-        bookedSeats.push(seat);
+    moviesContainer.innerHTML = `
+      <h3 class="text-center text-light">
+        Loading Movies...
+      </h3>
+    `;
 
-      });
+    const querySnapshot =
+    await getDocs(collection(db, 'movies'));
 
-    }
+    allMovies = [];
+
+    let places = [];
+
+    let theaters = [];
+
+    querySnapshot.forEach((docSnap) => {
+
+      const movie = {
+
+        id: docSnap.id,
+
+        ...docSnap.data()
+
+      };
+
+      allMovies.push(movie);
+
+      // UNIQUE PLACE
+
+      if(
+        !places.includes(movie.place)
+      ){
+
+        places.push(movie.place);
+
+      }
+
+      // UNIQUE THEATER
+
+      if(
+        !theaters.includes(movie.theater)
+      ){
+
+        theaters.push(movie.theater);
+
+      }
+
+    });
+
+    // PLACE FILTER
+
+    placeFilter.innerHTML = `
+      <option value="">
+        Select Place
+      </option>
+    `;
+
+    places.forEach(place => {
+
+      placeFilter.innerHTML += `
+
+        <option value="${place}">
+          ${place}
+        </option>
+
+      `;
+
+    });
+
+    // THEATER FILTER
+
+    theaterFilter.innerHTML = `
+      <option value="">
+        Select Theater
+      </option>
+    `;
+
+    theaters.forEach(theater => {
+
+      theaterFilter.innerHTML += `
+
+        <option value="${theater}">
+          ${theater}
+        </option>
+
+      `;
+
+    });
+
+    renderMovies(allMovies);
+
+  } catch(error){
+
+    console.log(error);
+
+    moviesContainer.innerHTML = `
+      <h3 class="text-danger text-center">
+        Failed To Load Movies
+      </h3>
+    `;
+
+  }
+
+}
+
+// ======================
+// RENDER MOVIES
+// ======================
+
+function renderMovies(movies){
+
+  moviesContainer.innerHTML = '';
+
+  // EMPTY
+
+  if(movies.length === 0){
+
+    moviesContainer.innerHTML = `
+      <h3 class="text-center text-light">
+        No Movies Available
+      </h3>
+    `;
+
+    return;
+  }
+
+  movies.forEach(movie => {
+
+    // TODAY
+
+    const today =
+    new Date();
+
+    // MOVIE DATE
+
+    const movieDate =
+    new Date(movie.startDate);
+
+    // ENABLE DATE
+    // 1 DAY BEFORE
+
+    const enableDate =
+    new Date(movieDate);
+
+    enableDate.setDate(
+      enableDate.getDate() - 1
+    );
+
+    const bookingEnabled =
+    today >= enableDate;
+
+    moviesContainer.innerHTML += `
+
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+
+        <div class="neon-card movie-card h-100 p-3">
+
+          <img
+            src="${movie.posterUrl}"
+            class="img-fluid rounded mb-3"
+            style="
+              height:350px;
+              object-fit:cover;
+            "
+          >
+
+          <h4 class="neon-heading mb-3">
+            ${movie.movieName}
+          </h4>
+
+          <p class="text-light">
+            📍 ${movie.place}
+          </p>
+
+          <p class="text-light">
+            🎬 ${movie.theater}
+          </p>
+
+          <p class="text-light">
+            📅 Release:
+            ${movie.startDate}
+          </p>
+
+          <p class="text-light">
+            🕒 ${movie.showTime}
+          </p>
+
+          <p class="text-light">
+            💰 ₹${movie.ticketPrice}
+          </p>
+
+          ${
+            bookingEnabled
+
+            ?
+
+            `
+              <a
+                href="./booking.html?id=${movie.id}"
+                class="btn neon-btn mt-auto"
+              >
+                Book Now
+              </a>
+            `
+
+            :
+
+            `
+              <button
+                class="btn btn-secondary mt-auto"
+                disabled
+              >
+                Booking Opens 1 Day Before
+              </button>
+            `
+          }
+
+        </div>
+
+      </div>
+
+    `;
 
   });
 
 }
 
 // ======================
-// GENERATE SEATS
+// FILTER MOVIES
 // ======================
 
-function generateSeats(){
+function filterMovies(){
 
-  seatContainer.innerHTML = '';
+  const search =
+  searchInput.value.toLowerCase();
 
-  const rows =
-  Number(movieData.rows);
+  const place =
+  placeFilter.value;
 
-  const cols =
-  Number(movieData.cols);
+  const theater =
+  theaterFilter.value;
 
-  const walkwayAfter =
-  Number(movieData.walkwayAfter);
+  const filteredMovies =
+  allMovies.filter(movie => {
 
-  const walkwayType =
-  movieData.walkwayType;
+    return (
 
-  for(let r = 0; r < rows; r++){
+      movie.movieName
+      .toLowerCase()
+      .includes(search)
 
-    const row =
-    document.createElement('div');
-
-    row.classList.add('seat-row');
-
-    for(let c = 0; c < cols; c++){
-
-      // VERTICAL WALKWAY
-
-      if(
-        walkwayType === 'vertical'
-        &&
-        c === walkwayAfter
-      ){
-
-        const walkway =
-        document.createElement('div');
-
-        walkway.classList.add('walkway');
-
-        row.appendChild(walkway);
-
-      }
-
-      const seat =
-      document.createElement('div');
-
-      const seatId =
-      `${String.fromCharCode(65+r)}${c+1}`;
-
-      seat.classList.add('seat');
-
-      // BOOKED
-
-      if(
-        bookedSeats.includes(seatId)
-      ){
-
-        seat.classList.add('booked');
-
-      }
-
-      else {
-
-        seat.classList.add('available');
-
-        seat.addEventListener(
-          'click',
-          () => toggleSeat(
-            seat,
-            seatId
-          )
-        );
-
-      }
-
-      seat.innerHTML =
-      seatId;
-
-      row.appendChild(seat);
-
-    }
-
-    seatContainer.appendChild(row);
-
-    // HORIZONTAL WALKWAY
-
-    if(
-      walkwayType === 'horizontal'
       &&
-      r === walkwayAfter-1
-    ){
 
-      const gap =
-      document.createElement('div');
+      (
+        place === ''
+        ||
+        movie.place === place
+      )
 
-      gap.style.height =
-      '25px';
+      &&
 
-      seatContainer.appendChild(gap);
+      (
+        theater === ''
+        ||
+        movie.theater === theater
+      )
 
-    }
+    );
 
-  }
+  });
+
+  renderMovies(filteredMovies);
 
 }
 
 // ======================
-// TOGGLE SEAT
+// EVENTS
 // ======================
 
-function toggleSeat(
-  seat,
-  seatId
-){
-
-  if(
-    selectedSeats.includes(seatId)
-  ){
-
-    selectedSeats =
-    selectedSeats.filter(
-      s => s !== seatId
-    );
-
-    seat.classList.remove(
-      'selected'
-    );
-
-    seat.classList.add(
-      'available'
-    );
-
-  }
-
-  else {
-
-    selectedSeats.push(
-      seatId
-    );
-
-    seat.classList.remove(
-      'available'
-    );
-
-    seat.classList.add(
-      'selected'
-    );
-
-  }
-
-  updateSummary();
-
-}
-
-// ======================
-// UPDATE SUMMARY
-// ======================
-
-function updateSummary(){
-
-  selectedSeatsText.innerHTML =
-
-  selectedSeats.join(', ')
-  || 'None';
-
-  const total =
-
-  selectedSeats.length
-  *
-  movieData.ticketPrice;
-
-  totalPriceText.innerHTML =
-  total;
-
-  // UPDATE QR LIVE
-
-  loadUpi();
-
-}
-
-// ======================
-// LOAD UPI + QR
-// ======================
-
-async function loadUpi(){
-
-  const upiRef =
-  doc(db, 'settings', 'upi');
-
-  const upiSnap =
-  await getDoc(upiRef);
-
-  if(!upiSnap.exists()){
-
-    upiText.innerHTML =
-    'UPI Not Configured';
-
-    return;
-  }
-
-  const upi =
-  upiSnap.data();
-
-  const amount =
-
-  selectedSeats.length
-  *
-  movieData.ticketPrice;
-
-  upiText.innerHTML = `
-    Pay Using:
-    ${upi.upiId}
-  `;
-
-  // UPI LINK
-
-  const upiLink =
-
-  `upi://pay?pa=${upi.upiId}&pn=${upi.upiName}&am=${amount}&cu=INR`;
-
-  // QR GENERATION
-
-  qrCode.src =
-
-  `https://quickchart.io/qr?text=${encodeURIComponent(upiLink)}&size=250`;
-
-}
-
-// ======================
-// CONFIRM BOOKING
-// ======================
-
-confirmBookingBtn.addEventListener(
-  'click',
-  async () => {
-
-    if(
-      selectedSeats.length === 0
-    ){
-
-      alert('Select Seats');
-
-      return;
-    }
-
-    if(
-      bookingDate.value === ''
-    ){
-
-      alert('Select Booking Date');
-
-      return;
-    }
-
-    confirmBookingBtn.disabled =
-    true;
-
-    confirmBookingBtn.innerHTML =
-    'Booking Seats...';
-
-    try {
-
-      const user =
-      auth.currentUser;
-
-      await addDoc(
-        collection(db, 'bookings'),
-        {
-
-          movieId,
-
-          userId:user.uid,
-
-          seats:selectedSeats,
-
-          bookingDate:
-          bookingDate.value,
-
-          showTime:
-          bookingTime.value,
-
-          totalPrice:
-          selectedSeats.length
-          *
-          movieData.ticketPrice,
-
-          createdAt:
-          new Date()
-
-        }
-
-      );
-
-      alert(
-        'Booking Successful'
-      );
-
-      window.location.reload();
-
-    } catch(error){
-
-      console.log(error);
-
-      alert(error.message);
-
-    }
-
-  }
+searchInput.addEventListener(
+  'input',
+  filterMovies
 );
 
-// ======================
-// INIT
-// ======================
+placeFilter.addEventListener(
+  'change',
+  filterMovies
+);
 
-loadMovie();
+theaterFilter.addEventListener(
+  'change',
+  filterMovies
+);
