@@ -1,3 +1,5 @@
+// js/admin.js
+
 import {
   auth,
   db
@@ -48,14 +50,29 @@ document.getElementById('walkwayType');
 const walkwayAfter =
 document.getElementById('walkwayAfter');
 
-const showTime =
-document.getElementById('showTime');
-
 const showDate =
 document.getElementById('showDate');
 
+const runDays =
+document.getElementById('runDays');
+
 const bookingOpenDays =
 document.getElementById('bookingOpenDays');
+
+const showsPerDay =
+document.getElementById('showsPerDay');
+
+const showNumber =
+document.getElementById('showNumber');
+
+const showTime =
+document.getElementById('showTime');
+
+const intervalTime =
+document.getElementById('intervalTime');
+
+const cleaningTime =
+document.getElementById('cleaningTime');
 
 const addMovieBtn =
 document.getElementById('addMovieBtn');
@@ -122,6 +139,10 @@ addMovieBtn.addEventListener(
       :
       'Adding Movie...';
 
+      // ======================
+      // MOVIE DATA
+      // ======================
+
       const movieData = {
 
         movieName:
@@ -151,20 +172,43 @@ addMovieBtn.addEventListener(
         walkwayAfter:
         Number(walkwayAfter.value),
 
-        showTime:
-        showTime.value,
-
         showDate:
         showDate.value,
+
+        runDays:
+        Number(runDays.value),
 
         bookingOpenDays:
         Number(
           bookingOpenDays.value
+        ),
+
+        showsPerDay:
+        Number(
+          showsPerDay.value
+        ),
+
+        showNumber:
+        showNumber.value,
+
+        showTime:
+        showTime.value,
+
+        intervalTime:
+        Number(
+          intervalTime.value
+        ),
+
+        cleaningTime:
+        Number(
+          cleaningTime.value
         )
 
       };
 
+      // ======================
       // UPDATE
+      // ======================
 
       if(editMovieId){
 
@@ -183,7 +227,9 @@ addMovieBtn.addEventListener(
 
       }
 
+      // ======================
       // ADD
+      // ======================
 
       else {
 
@@ -231,7 +277,8 @@ async function loadMovies(){
 
   querySnapshot.forEach((docSnap) => {
 
-    const movie = docSnap.data();
+    const movie =
+    docSnap.data();
 
     moviesContainer.innerHTML += `
 
@@ -262,7 +309,17 @@ async function loadMovies(){
           </p>
 
           <p class="text-light">
-            📅 ${movie.showDate}
+            📅 Start:
+            ${movie.showDate}
+          </p>
+
+          <p class="text-light">
+            📆 Runs:
+            ${movie.runDays} Days
+          </p>
+
+          <p class="text-light">
+            🎭 ${movie.showNumber}
           </p>
 
           <p class="text-light">
@@ -270,9 +327,24 @@ async function loadMovies(){
           </p>
 
           <p class="text-light">
+            🎬 ${movie.showsPerDay}
+            Shows Daily
+          </p>
+
+          <p class="text-light">
+            ⏸ Interval:
+            ${movie.intervalTime} mins
+          </p>
+
+          <p class="text-light">
+            🧹 Cleaning:
+            ${movie.cleaningTime} mins
+          </p>
+
+          <p class="text-light">
             🎟 Booking Opens:
             ${movie.bookingOpenDays}
-            day(s) before
+            Day(s) Before
           </p>
 
           <p class="text-light">
@@ -322,7 +394,8 @@ async function loadUsers(){
 
   querySnapshot.forEach((docSnap) => {
 
-    const user = docSnap.data();
+    const user =
+    docSnap.data();
 
     usersTableBody.innerHTML += `
 
@@ -335,8 +408,6 @@ async function loadUsers(){
         <td>${user.phone || ''}</td>
 
         <td>${user.address || ''}</td>
-
-        <td>${user.role || 'user'}</td>
 
       </tr>
 
@@ -361,7 +432,8 @@ async function loadBookings(){
 
   querySnapshot.forEach((docSnap) => {
 
-    const booking = docSnap.data();
+    const booking =
+    docSnap.data();
 
     bookingsTableBody.innerHTML += `
 
@@ -390,11 +462,11 @@ async function loadBookings(){
         </td>
 
         <td>
-          ${booking.showDate || ''}
+          ${booking.selectedDate || ''}
         </td>
 
         <td>
-          ${booking.showTime || ''}
+          ${booking.showNumber || ''}
         </td>
 
         <td>
@@ -455,19 +527,38 @@ async function(id){
       walkwayAfter.value =
       movie.walkwayAfter;
 
-      showTime.value =
-      movie.showTime;
-
       showDate.value =
       movie.showDate;
 
+      runDays.value =
+      movie.runDays;
+
       bookingOpenDays.value =
       movie.bookingOpenDays;
+
+      showsPerDay.value =
+      movie.showsPerDay;
+
+      showNumber.value =
+      movie.showNumber;
+
+      showTime.value =
+      movie.showTime;
+
+      intervalTime.value =
+      movie.intervalTime;
+
+      cleaningTime.value =
+      movie.cleaningTime;
 
       editMovieId = id;
 
       addMovieBtn.innerHTML =
       'Update Movie';
+
+      showSection(
+        'movieSection'
+      );
 
       window.scrollTo({
 
@@ -529,7 +620,9 @@ saveUpiBtn.addEventListener(
       }
     );
 
-    alert('UPI Saved');
+    alert(
+      'UPI Saved Successfully'
+    );
 
   }
 );

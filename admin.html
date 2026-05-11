@@ -14,14 +14,10 @@
 
   <title>Dolly Movies Admin</title>
 
-  <!-- BOOTSTRAP -->
-
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
   >
-
-  <!-- CSS -->
 
   <link
     rel="stylesheet"
@@ -82,7 +78,7 @@
 
     <div class="col-lg-10 col-md-9 p-4">
 
-      <!-- TOP BAR -->
+      <!-- TOP -->
 
       <div class="d-flex justify-content-between align-items-center mb-5">
 
@@ -111,6 +107,8 @@
 
           <div class="row">
 
+            <!-- MOVIE -->
+
             <div class="col-md-6 mb-3">
 
               <label class="form-label text-light">
@@ -124,6 +122,8 @@
               >
 
             </div>
+
+            <!-- POSTER -->
 
             <div class="col-md-6 mb-3">
 
@@ -139,6 +139,8 @@
 
             </div>
 
+            <!-- PLACE -->
+
             <div class="col-md-4 mb-3">
 
               <label class="form-label text-light">
@@ -152,6 +154,8 @@
               >
 
             </div>
+
+            <!-- THEATER -->
 
             <div class="col-md-4 mb-3">
 
@@ -167,6 +171,8 @@
 
             </div>
 
+            <!-- PRICE -->
+
             <div class="col-md-4 mb-3">
 
               <label class="form-label text-light">
@@ -180,6 +186,8 @@
               >
 
             </div>
+
+            <!-- ROWS -->
 
             <div class="col-md-3 mb-3">
 
@@ -195,6 +203,8 @@
 
             </div>
 
+            <!-- COLS -->
+
             <div class="col-md-3 mb-3">
 
               <label class="form-label text-light">
@@ -208,6 +218,8 @@
               >
 
             </div>
+
+            <!-- WALKWAY TYPE -->
 
             <div class="col-md-3 mb-3">
 
@@ -232,6 +244,8 @@
 
             </div>
 
+            <!-- WALKWAY AFTER -->
+
             <div class="col-md-3 mb-3">
 
               <label class="form-label text-light">
@@ -246,10 +260,12 @@
 
             </div>
 
+            <!-- START DATE -->
+
             <div class="col-md-4 mb-3">
 
               <label class="form-label text-light">
-                Release Date
+                Movie Start Date
               </label>
 
               <input
@@ -259,6 +275,94 @@
               >
 
             </div>
+
+            <!-- RUN DAYS -->
+
+            <div class="col-md-4 mb-3">
+
+              <label class="form-label text-light">
+                Movie Runs For (Days)
+              </label>
+
+              <input
+                type="number"
+                id="runDays"
+                class="form-control neon-input"
+              >
+
+            </div>
+
+            <!-- BOOKING DAYS -->
+
+            <div class="col-md-4 mb-3">
+
+              <label class="form-label text-light">
+                Booking Opens Before
+              </label>
+
+              <input
+                type="number"
+                id="bookingOpenDays"
+                class="form-control neon-input"
+                value="1"
+              >
+
+            </div>
+
+            <!-- SHOWS -->
+
+            <div class="col-md-4 mb-3">
+
+              <label class="form-label text-light">
+                Shows Per Day
+              </label>
+
+              <input
+                type="number"
+                id="showsPerDay"
+                class="form-control neon-input"
+              >
+
+            </div>
+
+            <!-- SHOW NUMBER -->
+
+            <div class="col-md-4 mb-3">
+
+              <label class="form-label text-light">
+                Show Number
+              </label>
+
+              <select
+                id="showNumber"
+                class="form-select neon-input"
+              >
+
+                <option value="1st Show">
+                  1st Show
+                </option>
+
+                <option value="2nd Show">
+                  2nd Show
+                </option>
+
+                <option value="3rd Show">
+                  3rd Show
+                </option>
+
+                <option value="4th Show">
+                  4th Show
+                </option>
+
+                <option value="5th Show">
+                  5th Show
+                </option>
+
+              </select>
+
+            </div>
+
+            <!-- TIME -->
 
             <div class="col-md-4 mb-3">
 
@@ -274,17 +378,34 @@
 
             </div>
 
-            <div class="col-md-4 mb-3">
+            <!-- INTERVAL -->
+
+            <div class="col-md-6 mb-3">
 
               <label class="form-label text-light">
-                Booking Opens Before
+                Interval Time (Minutes)
               </label>
 
               <input
                 type="number"
-                id="bookingOpenDays"
+                id="intervalTime"
                 class="form-control neon-input"
-                value="1"
+              >
+
+            </div>
+
+            <!-- CLEANING -->
+
+            <div class="col-md-6 mb-3">
+
+              <label class="form-label text-light">
+                Cleaning Time (Minutes)
+              </label>
+
+              <input
+                type="number"
+                id="cleaningTime"
+                class="form-control neon-input"
               >
 
             </div>
@@ -302,11 +423,14 @@
 
         <!-- MOVIES -->
 
-        <div class="row" id="moviesContainer"></div>
+        <div
+          class="row"
+          id="moviesContainer"
+        ></div>
 
       </section>
 
-      <!-- UPI SECTION -->
+      <!-- UPI -->
 
       <section
         id="upiSection"
@@ -362,7 +486,7 @@
 
       </section>
 
-      <!-- USERS SECTION -->
+      <!-- USERS -->
 
       <section
         id="usersSection"
@@ -405,7 +529,7 @@
 
       </section>
 
-      <!-- BOOKINGS SECTION -->
+      <!-- BOOKINGS -->
 
       <section
         id="bookingSection"
