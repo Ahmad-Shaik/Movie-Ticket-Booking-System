@@ -1,4 +1,648 @@
 import {
+  db,
+  auth
+} from './firebase.js';
+
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+// ======================
+// URL PARAMS
+// ======================
+
+const params =
+new URLSearchParams(
+  window.location.search
+);
+
+const movieId =
+params.get('id');
+
+// ======================
+// ELEMENTS
+// ======================
+
+const movieDetails =
+document.getElementById(
+  'movieDetails'
+);
+
+const dateSelect =
+document.getElementById(
+  'dateSelect'
+);
+
+const showSelect =
+document.getElementById(
+  'showSelect'
+);
+
+const seatContainer =
+document.getElementById(
+  'seatContainer'
+);
+
+const paymentSection =
+document.getElementById(
+  'paymentSection'
+);
+
+const upiQr =
+document.getElementById(
+  'upiQr'
+);
+
+const totalAmountText =
+document.getElementById(
+  'totalAmountText'
+);
+
+const verifyPaymentBtn =
+document.getElementById(
+  'verifyPaymentBtn'
+);
+
+const seatTimer =
+document.getElementById(
+  'seatTimer'
+);
+
+const timerText =
+document.getElementById(
+  'timerText'
+);
+
+// ======================
+// VARIABLES
+// ======================
+
+let movie;
+
+let selectedSeats = [];
+
+let bookedSeats = [];
+
+let selectedDate = '';
+
+let selectedShow = '';
+
+let timerInterval;
+
+let remainingSeconds = 300;
+
+let paymentExpired = false;
+
+// ======================
+// LOAD MOVIE
+// ======================
+
+async function loadMovie(){
+
+  try{
+
+    const docRef =
+    doc(db, 'movies', movieId);
+
+    const docSnap =
+    await getDoc(docRef);
+
+    if(!docSnap.exists()){
+
+      movieDetails.innerHTML = `
+        <h2 class="text-danger text-center">
+          Movie Not Found
+        </h2>
+      `;
+
+      return;
+
+    }
+
+    movie = docSnap.data();
+
+    bookedSeats =
+    movie.bookedSeats || [];
+
+    movieDetails.innerHTML = `
+
+      <div class="row align-items-center">
+
+        <div class="col-md-4 text-center mb-3">
+
+          <img
+            src="${movie.posterUrl}"
+            class="img-fluid rounded"
+            style="max-height:400px;"
+          >
+
+        </div>
+
+        <div class="col-md-8">
+
+          <h1 class="neon-heading">
+            ${movie.movieName || 'Movie'}
+          </h1>
+
+          <p class="text-light fs-5">
+            📍 ${movie.place || 'N/A'}
+          </p>
+
+          <p class="text-light fs-5">
+            🎬 ${movie.theater || 'N/A'}
+          </p>
+
+          <p class="text-light fs-5">
+            💰 ₹${movie.ticketPrice || 0}
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+    generateDates();
+
+    generateShows();
+
+    renderSeats();
+
+    enableLiveSeatUpdates();
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    movieDetails.innerHTML = `
+      <h2 class="text-danger text-center">
+        Error Loading Booking Page
+      </h2>
+    `;
+
+  }
+
+}
+
+// ======================
+// DATES
+// ======================
+
+function generateDates(){
+
+  dateSelect.innerHTML = '';
+
+  const startDate =
+  movie.showDate
+  ? new Date(movie.showDate)
+  : new Date();
+
+  const totalDays =
+  movie.runDays || 1;
+
+  for(
+    let i = 0;
+    i < totalDays;
+    i++
+  ){
+
+    const date =
+    new Date(startDate);
+
+    date.setDate(
+      startDate.getDate() + i
+    );
+
+    const formatted =
+    date.toISOString().split('T')[0];
+
+    dateSelect.innerHTML += `
+      <option value="${formatted}">
+        ${formatted}
+      </option>
+    `;
+
+  }
+
+  selectedDate =
+  dateSelect.value;
+
+}
+
+// ======================
+// SHOWS
+// ======================
+
+function generateShows(){
+
+  showSelect.innerHTML = '';
+
+  if(
+    !movie.shows ||
+    movie.shows.length === 0
+  ){
+
+    showSelect.innerHTML = `
+      <option value="Morning Show">
+        Morning Show - 10:00 AM
+      </option>
+    `;
+
+    selectedShow =
+    'Morning Show';
+
+    return;
+
+  }
+
+  movie.shows.forEach(show => {
+
+    showSelect.innerHTML += `
+
+      <option value="${show.showName}">
+        ${show.showName}
+        -
+        ${show.startTime}
+      </option>
+
+    `;
+
+  });
+
+  selectedShow =
+  showSelect.value;
+
+}
+
+// ======================
+// RENDER SEATS
+// ======================
+
+function renderSeats(){
+
+  seatContainer.innerHTML = '';
+
+  const totalRows =
+  movie.rows || 5;
+
+  const totalCols =
+  movie.cols || 10;
+
+  for(
+    let r = 1;
+    r <= totalRows;
+    r++
+  ){
+
+    const row =
+    document.createElement('div');
+
+    row.className =
+    'mb-2 text-center';
+
+    for(
+      let c = 1;
+      c <= totalCols;
+      c++
+    ){
+
+      const seatId =
+      `${r}-${c}`;
+
+      const btn =
+      document.createElement('button');
+
+      btn.innerHTML =
+      seatId;
+
+      btn.className =
+      'btn m-1';
+
+      if(
+        bookedSeats.includes(seatId)
+      ){
+
+        btn.classList.add(
+          'btn-danger'
+        );
+
+        btn.disabled = true;
+
+      }
+
+      else if(
+        selectedSeats.includes(seatId)
+      ){
+
+        btn.classList.add(
+          'btn-success'
+        );
+
+      }
+
+      else{
+
+        btn.classList.add(
+          'btn-outline-light'
+        );
+
+      }
+
+      btn.addEventListener(
+        'click',
+        () => toggleSeat(seatId)
+      );
+
+      row.appendChild(btn);
+
+    }
+
+    seatContainer.appendChild(row);
+
+  }
+
+}
+
+// ======================
+// TOGGLE SEATS
+// ======================
+
+function toggleSeat(seatId){
+
+  if(
+    selectedSeats.includes(seatId)
+  ){
+
+    selectedSeats =
+    selectedSeats.filter(
+      seat => seat !== seatId
+    );
+
+  }
+
+  else{
+
+    selectedSeats.push(seatId);
+
+  }
+
+  renderSeats();
+
+  generatePaymentQR();
+
+}
+
+// ======================
+// TIMER
+// ======================
+
+function startSeatTimer(){
+
+  clearInterval(timerInterval);
+
+  remainingSeconds = 300;
+
+  paymentExpired = false;
+
+  seatTimer.style.display = 'block';
+
+  timerInterval = setInterval(() => {
+
+    const mins =
+    Math.floor(
+      remainingSeconds / 60
+    );
+
+    const secs =
+    remainingSeconds % 60;
+
+    timerText.innerHTML =
+    `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+    remainingSeconds--;
+
+    if(remainingSeconds < 0){
+
+      clearInterval(timerInterval);
+
+      autoCancelSeats();
+
+    }
+
+  }, 1000);
+
+}
+
+// ======================
+// AUTO CANCEL
+// ======================
+
+function autoCancelSeats(){
+
+  paymentExpired = true;
+
+  alert(
+    'Payment expired. Seats released.'
+  );
+
+  selectedSeats = [];
+
+  renderSeats();
+
+  paymentSection.style.display =
+  'none';
+
+  seatTimer.style.display =
+  'none';
+
+}
+
+// ======================
+// PAYMENT QR
+// ======================
+
+async function generatePaymentQR(){
+
+  if(selectedSeats.length === 0){
+
+    paymentSection.style.display =
+    'none';
+
+    return;
+
+  }
+
+  paymentSection.style.display =
+  'block';
+
+  startSeatTimer();
+
+  const totalAmount =
+  selectedSeats.length *
+  (movie.ticketPrice || 0);
+
+  totalAmountText.innerHTML =
+  totalAmount;
+
+  const upiDoc =
+  await getDoc(
+    doc(db, 'settings', 'upi')
+  );
+
+  let upiData = {
+
+    upiId: 'demo@upi',
+
+    upiName: 'Dolly Movies'
+
+  };
+
+  if(upiDoc.exists()){
+
+    upiData =
+    upiDoc.data();
+
+  }
+
+  const upiUrl =
+  `upi://pay?pa=${upiData.upiId}&pn=${upiData.upiName}&am=${totalAmount}&cu=INR`;
+
+  const qrDiv =
+  document.createElement('div');
+
+  new QRCode(qrDiv, {
+
+    text: upiUrl,
+
+    width:250,
+
+    height:250
+
+  });
+
+  const qrImage =
+  qrDiv.querySelector('img');
+
+  upiQr.src =
+  qrImage.src;
+
+}
+
+// ======================
+// LIVE UPDATES
+// ======================
+
+function enableLiveSeatUpdates(){
+
+  onSnapshot(
+
+    doc(db, 'movies', movieId),
+
+    (snapshot) => {
+
+      const updatedMovie =
+      snapshot.data();
+
+      if(updatedMovie){
+
+        bookedSeats =
+        updatedMovie.bookedSeats || [];
+
+        renderSeats();
+
+      }
+
+    }
+
+  );
+
+}
+
+// ======================
+// PAYMENT VERIFY
+// ======================
+
+verifyPaymentBtn.addEventListener(
+
+  'click',
+
+  async () => {
+
+    if(paymentExpired){
+
+      alert(
+        'QR expired. Please reselect seats.'
+      );
+
+      return;
+
+    }
+
+    verifyPaymentBtn.disabled =
+    true;
+
+    verifyPaymentBtn.innerHTML =
+    'Processing...';
+
+    const totalAmount =
+    selectedSeats.length *
+    (movie.ticketPrice || 0);
+
+    await addDoc(
+
+      collection(db, 'bookings'),
+
+      {
+
+        userId:
+        auth.currentUser.uid,
+
+        movieId,
+
+        movieName:
+        movie.movieName,
+
+        theater:
+        movie.theater,
+
+        selectedSeats,
+
+        selectedDate,
+
+        selectedShow,
+
+        totalAmount,
+
+        paymentStatus:
+        'PAID',
+
+        createdAt:
+        serverTimestamp()
+
+      }
+
+    );
+
+    const updatedBookedSeats = [
+
+      ...(movie.bookedSeats || []),
+
+      ...selectedSeats
+
+    ];
+
+    await updateDoc(
+
+      doc(db, 'movies', movieId),
+
       {
 
         bookedSeats:
@@ -12,14 +656,13 @@ import {
 
     clearInterval(timerInterval);
 
-    alert(
-      'Booking Successful'
-    );
+    alert('Booking Successful');
 
     window.location.href =
     './dashboard.html';
 
   }
+
 );
 
 // ======================
@@ -32,7 +675,8 @@ function generateTicketPDF(totalAmount){
     jsPDF
   } = window.jspdf;
 
-  const pdf = new jsPDF();
+  const pdf =
+  new jsPDF();
 
   pdf.setFontSize(22);
 
@@ -95,23 +739,29 @@ function generateTicketPDF(totalAmount){
 // ======================
 
 dateSelect.addEventListener(
+
   'change',
+
   () => {
 
     selectedDate =
     dateSelect.value;
 
   }
+
 );
 
 showSelect.addEventListener(
+
   'change',
+
   () => {
 
     selectedShow =
     showSelect.value;
 
   }
+
 );
 
 // ======================
