@@ -245,40 +245,116 @@ function generateShows(){
 
   showSelect.innerHTML = '';
 
+  // USE FIRESTORE SHOWS
+
   if(
-    !movie.shows ||
-    movie.shows.length === 0
+    movie.shows &&
+    movie.shows.length > 0
   ){
 
-    showSelect.innerHTML = `
-      <option value="Morning Show">
-        Morning Show - 10:00 AM
-      </option>
-    `;
+    movie.shows.forEach(show => {
+
+      showSelect.innerHTML += `
+
+        <option value="${show.showName}">
+
+          ${show.showName}
+          -
+          ${show.startTime}
+
+        </option>
+
+      `;
+
+    });
 
     selectedShow =
-    'Morning Show';
+    showSelect.value;
 
     return;
 
   }
 
-  movie.shows.forEach(show => {
+  // AUTO GENERATE SHOWS
+
+  const firstShow =
+  movie.firstShowTime || '07:00';
+
+  const totalShows =
+  movie.showsPerDay || 5;
+
+  const movieDuration =
+  movie.movieDuration || 150;
+
+  const intervalTime =
+  movie.intervalTime || 20;
+
+  const cleaningTime =
+  movie.cleaningTime || 20;
+
+  let currentTime =
+  convertToMinutes(firstShow);
+
+  for(
+    let i = 1;
+    i <= totalShows;
+    i++
+  ){
+
+    const formattedTime =
+    convertTo12Hour(currentTime);
+
+    const showName =
+    `Show ${i}`;
 
     showSelect.innerHTML += `
 
-      <option value="${show.showName}">
-        ${show.showName}
+      <option value="${showName}">
+
+        ${showName}
         -
-        ${show.startTime}
+        ${formattedTime}
+
       </option>
 
     `;
 
-  });
+    currentTime +=
+    movieDuration +
+    intervalTime +
+    cleaningTime;
+
+  }
 
   selectedShow =
   showSelect.value;
+
+}
+
+function convertToMinutes(time){
+
+  const [hours, minutes] =
+  time.split(':').map(Number);
+
+  return (hours * 60) + minutes;
+
+}
+
+function convertTo12Hour(totalMinutes){
+
+  let hours =
+  Math.floor(totalMinutes / 60);
+
+  let minutes =
+  totalMinutes % 60;
+
+  const ampm =
+  hours >= 12 ? 'PM' : 'AM';
+
+  hours =
+  hours % 12 || 12;
+
+  return `${hours}:${String(minutes).padStart(2,'0')} ${ampm}`;
 
 }
 
