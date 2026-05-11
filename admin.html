@@ -1,3 +1,5 @@
+<!-- admin.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,33 +46,33 @@
 
       <div class="d-flex flex-column gap-3">
 
-        <a
-          href="#movieSection"
+        <button
           class="btn neon-btn"
+          onclick="showSection('movieSection')"
         >
           Add / Update Movie
-        </a>
+        </button>
 
-        <a
-          href="#upiSection"
+        <button
           class="btn neon-btn"
+          onclick="showSection('upiSection')"
         >
           UPI Settings
-        </a>
+        </button>
 
-        <a
-          href="#usersSection"
+        <button
           class="btn neon-btn"
+          onclick="showSection('usersSection')"
         >
           Registered Users
-        </a>
+        </button>
 
-        <a
-          href="#bookingSection"
+        <button
           class="btn neon-btn"
+          onclick="showSection('bookingSection')"
         >
           Booking Data
-        </a>
+        </button>
 
       </div>
 
@@ -97,7 +99,7 @@
 
       </div>
 
-      <!-- ADD MOVIE -->
+      <!-- MOVIE SECTION -->
 
       <section id="movieSection">
 
@@ -108,8 +110,6 @@
           </h3>
 
           <div class="row">
-
-            <!-- MOVIE NAME -->
 
             <div class="col-md-6 mb-3">
 
@@ -125,8 +125,6 @@
 
             </div>
 
-            <!-- POSTER -->
-
             <div class="col-md-6 mb-3">
 
               <label class="form-label text-light">
@@ -140,8 +138,6 @@
               >
 
             </div>
-
-            <!-- PLACE -->
 
             <div class="col-md-4 mb-3">
 
@@ -157,8 +153,6 @@
 
             </div>
 
-            <!-- THEATER -->
-
             <div class="col-md-4 mb-3">
 
               <label class="form-label text-light">
@@ -172,8 +166,6 @@
               >
 
             </div>
-
-            <!-- PRICE -->
 
             <div class="col-md-4 mb-3">
 
@@ -189,8 +181,6 @@
 
             </div>
 
-            <!-- ROWS -->
-
             <div class="col-md-3 mb-3">
 
               <label class="form-label text-light">
@@ -205,8 +195,6 @@
 
             </div>
 
-            <!-- COLS -->
-
             <div class="col-md-3 mb-3">
 
               <label class="form-label text-light">
@@ -220,8 +208,6 @@
               >
 
             </div>
-
-            <!-- WALKWAY -->
 
             <div class="col-md-3 mb-3">
 
@@ -246,8 +232,6 @@
 
             </div>
 
-            <!-- WALKWAY AFTER -->
-
             <div class="col-md-3 mb-3">
 
               <label class="form-label text-light">
@@ -261,8 +245,6 @@
               >
 
             </div>
-
-            <!-- DATE -->
 
             <div class="col-md-4 mb-3">
 
@@ -278,8 +260,6 @@
 
             </div>
 
-            <!-- TIME -->
-
             <div class="col-md-4 mb-3">
 
               <label class="form-label text-light">
@@ -293,8 +273,6 @@
               >
 
             </div>
-
-            <!-- BOOKING DAYS -->
 
             <div class="col-md-4 mb-3">
 
@@ -322,13 +300,20 @@
 
         </div>
 
+        <!-- MOVIES -->
+
+        <div class="row" id="moviesContainer"></div>
+
       </section>
 
-      <!-- UPI -->
+      <!-- UPI SECTION -->
 
-      <section id="upiSection">
+      <section
+        id="upiSection"
+        style="display:none;"
+      >
 
-        <div class="neon-card p-4 mb-5">
+        <div class="neon-card p-4">
 
           <h3 class="neon-heading mb-4">
             💳 UPI Settings
@@ -377,11 +362,14 @@
 
       </section>
 
-      <!-- USERS -->
+      <!-- USERS SECTION -->
 
-      <section id="usersSection">
+      <section
+        id="usersSection"
+        style="display:none;"
+      >
 
-        <div class="neon-card p-4 mb-5">
+        <div class="neon-card p-4">
 
           <h3 class="neon-heading mb-4">
             👥 Registered Users
@@ -417,9 +405,12 @@
 
       </section>
 
-      <!-- BOOKINGS -->
+      <!-- BOOKINGS SECTION -->
 
-      <section id="bookingSection">
+      <section
+        id="bookingSection"
+        style="display:none;"
+      >
 
         <div class="neon-card p-4">
 
@@ -468,6 +459,36 @@
   </div>
 
 </div>
+
+<script>
+
+function showSection(sectionId){
+
+  document.getElementById(
+    'movieSection'
+  ).style.display = 'none';
+
+  document.getElementById(
+    'upiSection'
+  ).style.display = 'none';
+
+  document.getElementById(
+    'usersSection'
+  ).style.display = 'none';
+
+  document.getElementById(
+    'bookingSection'
+  ).style.display = 'none';
+
+  document.getElementById(
+    sectionId
+  ).style.display = 'block';
+
+}
+
+showSection('movieSection');
+
+</script>
 
 <script
   type="module"
