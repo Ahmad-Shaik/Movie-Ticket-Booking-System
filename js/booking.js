@@ -44,7 +44,7 @@ document.getElementById('userName');
 let allMovies = [];
 
 // ======================
-// AUTH CHECK
+// AUTH
 // ======================
 
 onAuthStateChanged(auth, async (user) => {
@@ -64,7 +64,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ======================
-// LOAD USER DATA
+// LOAD USER
 // ======================
 
 async function loadUserData(uid){
@@ -82,16 +82,12 @@ async function loadUserData(uid){
       const user =
       userSnap.data();
 
-      // ADMIN
-
       if(user.role === 'admin'){
 
         userName.innerHTML =
         '👑 ADMIN';
 
       }
-
-      // NORMAL USER
 
       else {
 
@@ -135,7 +131,7 @@ async function loadMovies(){
   try {
 
     moviesContainer.innerHTML = `
-      <h3 class="text-center text-light">
+      <h3 class="text-light text-center">
         Loading Movies...
       </h3>
     `;
@@ -183,9 +179,7 @@ async function loadMovies(){
 
     });
 
-    // ======================
     // PLACE FILTER
-    // ======================
 
     placeFilter.innerHTML = `
       <option value="">
@@ -196,18 +190,14 @@ async function loadMovies(){
     places.forEach(place => {
 
       placeFilter.innerHTML += `
-
         <option value="${place}">
           ${place}
         </option>
-
       `;
 
     });
 
-    // ======================
     // THEATER FILTER
-    // ======================
 
     theaterFilter.innerHTML = `
       <option value="">
@@ -218,11 +208,9 @@ async function loadMovies(){
     theaters.forEach(theater => {
 
       theaterFilter.innerHTML += `
-
         <option value="${theater}">
           ${theater}
         </option>
-
       `;
 
     });
@@ -256,7 +244,7 @@ function renderMovies(movies){
   if(movies.length === 0){
 
     moviesContainer.innerHTML = `
-      <h3 class="text-center text-light">
+      <h3 class="text-light text-center">
         No Movies Available
       </h3>
     `;
@@ -267,53 +255,47 @@ function renderMovies(movies){
   movies.forEach(movie => {
 
     // ======================
-    // TODAY
+    // DATE FIX
     // ======================
+
+    const releaseDate =
+    movie.showDate || movie.startDate;
+
+    // TODAY
 
     const today =
     new Date();
 
-    today.setHours(
-      0,0,0,0
-    );
+    today.setHours(0,0,0,0);
 
-    // ======================
     // MOVIE DATE
-    // ======================
 
     const movieDate =
     new Date(
-      movie.startDate + 'T00:00:00'
+      releaseDate + 'T00:00:00'
     );
 
-    // ======================
-    // BOOKING ENABLE DATE
-    // ONE DAY BEFORE
-    // ======================
+    // ENABLE DATE
 
     const enableDate =
     new Date(movieDate);
 
     enableDate.setDate(
-      movieDate.getDate() - 1
+      enableDate.getDate() - 1
     );
 
-    // ======================
-    // BOOKING STATUS
-    // ======================
+    // ENABLE BOOKING
 
     const bookingEnabled =
     today >= enableDate;
 
-    // ======================
-    // STATUS BADGE
-    // ======================
+    // BADGE
 
-    let statusBadge = '';
+    let badge = '';
 
     if(bookingEnabled){
 
-      statusBadge = `
+      badge = `
         <span class="badge bg-success mb-2">
           Booking Open
         </span>
@@ -323,7 +305,7 @@ function renderMovies(movies){
 
     else {
 
-      statusBadge = `
+      badge = `
         <span class="badge bg-warning text-dark mb-2">
           Coming Soon
         </span>
@@ -331,9 +313,7 @@ function renderMovies(movies){
 
     }
 
-    // ======================
     // CARD
-    // ======================
 
     moviesContainer.innerHTML += `
 
@@ -350,7 +330,7 @@ function renderMovies(movies){
             "
           >
 
-          ${statusBadge}
+          ${badge}
 
           <h4 class="neon-heading mb-3">
             ${movie.movieName}
@@ -366,7 +346,7 @@ function renderMovies(movies){
 
           <p class="text-light">
             📅 Release:
-            ${movie.startDate}
+            ${releaseDate}
           </p>
 
           <p class="text-light">
@@ -414,7 +394,7 @@ function renderMovies(movies){
 }
 
 // ======================
-// FILTER MOVIES
+// FILTER
 // ======================
 
 function filterMovies(){
