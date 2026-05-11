@@ -15,6 +15,10 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+// ======================
+// ELEMENTS
+// ======================
+
 const moviesContainer =
 document.getElementById('moviesContainer');
 
@@ -33,6 +37,10 @@ document.getElementById('theaterFilter');
 const userName =
 document.getElementById('userName');
 
+// ======================
+// VARIABLES
+// ======================
+
 let allMovies = [];
 
 // ======================
@@ -49,35 +57,24 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // LOAD USER NAME
-  loadUserData(user.uid);
-
-  // LOAD MOVIES
-  loadMovies();
-
-});
-
-// ======================
-// LOAD USER DATA
-// ======================
-
-async function loadUserData(uid){
-
   try {
 
+    // LOAD USER
+
     const userRef =
-    doc(db, 'users', uid);
+    doc(db, 'users', user.uid);
 
     const userSnap =
     await getDoc(userRef);
 
     if(userSnap.exists()){
 
-      const user =
+      const userData =
       userSnap.data();
 
       // ADMIN
-      if(user.role === 'admin'){
+
+      if(userData.role === 'admin'){
 
         userName.innerHTML =
         '👑 ADMIN';
@@ -85,14 +82,19 @@ async function loadUserData(uid){
       }
 
       // USER
+
       else {
 
         userName.innerHTML =
-        `👤 ${user.name}`;
+        `👤 ${userData.name}`;
 
       }
 
     }
+
+    // LOAD MOVIES
+
+    await loadMovies();
 
   } catch(error){
 
@@ -100,20 +102,23 @@ async function loadUserData(uid){
 
   }
 
-}
+});
 
 // ======================
 // LOGOUT
 // ======================
 
-logoutBtn.addEventListener('click', async () => {
+logoutBtn.addEventListener(
+  'click',
+  async () => {
 
-  await signOut(auth);
+    await signOut(auth);
 
-  window.location.href =
-  './index.html';
+    window.location.href =
+    './index.html';
 
-});
+  }
+);
 
 // ======================
 // LOAD MOVIES
@@ -124,37 +129,51 @@ async function loadMovies(){
   try {
 
     moviesContainer.innerHTML = `
-      <h3 class="text-center">
+      <h3 class="text-center text-light">
         Loading Movies...
       </h3>
     `;
 
+    // FIRESTORE
+
     const querySnapshot =
-    await getDocs(collection(db, 'movies'));
+    await getDocs(
+      collection(db, 'movies')
+    );
 
     allMovies = [];
 
     let places = [];
+
     let theaters = [];
 
     querySnapshot.forEach((docSnap) => {
 
       const movie = {
+
         id: docSnap.id,
+
         ...docSnap.data()
+
       };
 
       allMovies.push(movie);
 
-      // UNIQUE PLACE
-      if(!places.includes(movie.place)){
+      // UNIQUE PLACES
+
+      if(
+        !places.includes(movie.place)
+      ){
 
         places.push(movie.place);
 
       }
 
-      // UNIQUE THEATER
-      if(!theaters.includes(movie.theater)){
+      // UNIQUE THEATERS
+
+      if(
+        !theaters.includes(movie.theater)
+      ){
 
         theaters.push(movie.theater);
 
@@ -162,11 +181,13 @@ async function loadMovies(){
 
     });
 
+    // ======================
     // PLACE FILTER
-    placeFilter.innerHTML =
-    `
+    // ======================
+
+    placeFilter.innerHTML = `
       <option value="">
-        Select Place
+        All Places
       </option>
     `;
 
@@ -180,11 +201,13 @@ async function loadMovies(){
 
     });
 
+    // ======================
     // THEATER FILTER
-    theaterFilter.innerHTML =
-    `
+    // ======================
+
+    theaterFilter.innerHTML = `
       <option value="">
-        Select Theater
+        All Theaters
       </option>
     `;
 
@@ -198,6 +221,8 @@ async function loadMovies(){
 
     });
 
+    // RENDER
+
     renderMovies(allMovies);
 
   } catch(error){
@@ -205,9 +230,9 @@ async function loadMovies(){
     console.log(error);
 
     moviesContainer.innerHTML = `
-      <h2 class="text-danger text-center">
+      <h3 class="text-danger text-center">
         Failed To Load Movies
-      </h2>
+      </h3>
     `;
 
   }
@@ -222,11 +247,12 @@ function renderMovies(movies){
 
   moviesContainer.innerHTML = '';
 
-  // EMPTY
+  // NO MOVIES
+
   if(movies.length === 0){
 
     moviesContainer.innerHTML = `
-      <h3 class="text-center">
+      <h3 class="text-center text-light">
         No Movies Available
       </h3>
     `;
@@ -236,11 +262,100 @@ function renderMovies(movies){
 
   movies.forEach(movie => {
 
+    // ======================
+    // DATE FIX
+    // ======================
+
+    const releaseDate =
+    movie.showDate || '';
+
+    // TODAY
+
+    const today =
+    new Date();
+
+    today.setHours(0,0,0,0);
+
+    // MOVIE DATE
+
+    let movieDate =
+    new Date();
+
+    if(releaseDate){
+
+      movieDate =
+      new Date(
+        releaseDate + 'T00:00:00'
+      );
+
+    }
+
+    // ======================
+    // ADMIN BOOKING DAYS
+    // ======================
+
+    const bookingDays =
+    Number(
+      movie.bookingOpenDays || 1
+    );
+
+    // ======================
+    // ENABLE DATE
+    // ======================
+
+    const enableDate =
+    new Date(movieDate);
+
+    enableDate.setDate(
+      enableDate.getDate()
+      -
+      bookingDays
+    );
+
+    // ======================
+    // ENABLE BOOKING
+    // ======================
+
+    const bookingEnabled =
+    today >= enableDate;
+
+    // ======================
+    // STATUS BADGE
+    // ======================
+
+    let statusBadge = '';
+
+    if(bookingEnabled){
+
+      statusBadge = `
+        <span class="badge bg-success mb-2">
+          🎟 Booking Open
+        </span>
+      `;
+
+    }
+
+    else {
+
+      statusBadge = `
+        <span class="badge bg-warning text-dark mb-2">
+          ⏳ Coming Soon
+        </span>
+      `;
+
+    }
+
+    // ======================
+    // CARD
+    // ======================
+
     moviesContainer.innerHTML += `
 
       <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
 
-        <div class="card movie-card h-100 p-3">
+        <div class="neon-card movie-card h-100 p-3 d-flex flex-column">
+
+          <!-- POSTER -->
 
           <img
             src="${movie.posterUrl}"
@@ -251,36 +366,82 @@ function renderMovies(movies){
             "
           >
 
-          <h4 class="mb-3">
+          <!-- BADGE -->
+
+          ${statusBadge}
+
+          <!-- TITLE -->
+
+          <h4 class="neon-heading mb-3">
             ${movie.movieName}
           </h4>
 
-          <p>
+          <!-- PLACE -->
+
+          <p class="text-light">
             📍 ${movie.place}
           </p>
 
-          <p>
+          <!-- THEATER -->
+
+          <p class="text-light">
             🎬 ${movie.theater}
           </p>
 
-          <p>
-            📅 ${movie.showDate}
+          <!-- RELEASE DATE -->
+
+          <p class="text-light">
+            📅 Release:
+            ${releaseDate || 'Not Set'}
           </p>
 
-          <p>
+          <!-- SHOW TIME -->
+
+          <p class="text-light">
             🕒 ${movie.showTime}
           </p>
 
-          <p>
+          <!-- BOOKING DAYS -->
+
+          <p class="text-light">
+            🎟 Opens:
+            ${bookingDays}
+            day(s) before
+          </p>
+
+          <!-- PRICE -->
+
+          <p class="text-light">
             💰 ₹${movie.ticketPrice}
           </p>
 
-          <a
-            href="./booking.html?id=${movie.id}"
-            class="btn neon-btn mt-auto"
-          >
-            Book Now
-          </a>
+          <!-- BUTTON -->
+
+          ${
+            bookingEnabled
+
+            ?
+
+            `
+              <a
+                href="./booking.html?id=${movie.id}"
+                class="btn neon-btn mt-auto"
+              >
+                Book Now
+              </a>
+            `
+
+            :
+
+            `
+              <button
+                class="btn btn-secondary mt-auto"
+                disabled
+              >
+                Booking Opens Soon
+              </button>
+            `
+          }
 
         </div>
 

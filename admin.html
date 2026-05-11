@@ -10,12 +10,16 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Admin Panel</title>
+  <title>Dolly Movies Admin</title>
+
+  <!-- BOOTSTRAP -->
 
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
   >
+
+  <!-- CSS -->
 
   <link
     rel="stylesheet"
@@ -24,7 +28,7 @@
 
 </head>
 
-<body>
+<body class="neon-body">
 
 <div class="container-fluid">
 
@@ -32,32 +36,24 @@
 
     <!-- SIDEBAR -->
 
-    <div class="col-md-3 col-lg-2 sidebar p-4">
+    <div class="col-lg-2 col-md-3 sidebar p-4">
 
-      <h2 class="title mb-4">
-        🎬 ADMIN
+      <h2 class="neon-heading mb-4">
+        👑 ADMIN PANEL
       </h2>
 
-      <button
-        class="btn neon-btn w-100 mb-3"
-        id="moviesTabBtn"
+      <div
+        class="neon-card p-3 mb-4 text-center"
       >
-        Movie Management
-      </button>
 
-      <button
-        class="btn neon-btn w-100 mb-3"
-        id="usersTabBtn"
-      >
-        Users Data
-      </button>
+        <h5
+          id="adminName"
+          class="text-light m-0"
+        >
+          👑 ADMIN
+        </h5>
 
-      <button
-        class="btn neon-btn w-100 mb-3"
-        id="upiTabBtn"
-      >
-        UPI Settings
-      </button>
+      </div>
 
       <button
         class="btn btn-danger w-100"
@@ -68,295 +64,273 @@
 
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
 
-    <div class="col-md-9 col-lg-10 p-4">
+    <div class="col-lg-10 col-md-9 p-4">
 
-      <!-- MOVIE SECTION -->
+      <!-- TITLE -->
 
-      <div id="moviesSection">
+      <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <!-- ADD MOVIE CARD -->
-
-        <div class="neon-card p-4 mb-4">
-
-          <h3 class="mb-4 neon-heading">
-            Add Movie
-          </h3>
-
-          <div class="row">
-
-            <!-- MOVIE NAME -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Movie Name
-              </label>
-
-              <input
-                type="text"
-                id="movieName"
-                class="form-control neon-input"
-                placeholder="Enter Movie Name"
-              >
-
-            </div>
-
-            <!-- POSTER URL -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Poster URL
-              </label>
-
-              <input
-                type="text"
-                id="posterUrl"
-                class="form-control neon-input"
-                placeholder="Enter Poster URL"
-              >
-
-            </div>
-
-            <!-- PLACE -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Place
-              </label>
-
-              <input
-                type="text"
-                id="place"
-                class="form-control neon-input"
-                placeholder="Enter Place"
-              >
-
-            </div>
-
-            <!-- THEATER -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Theater Name
-              </label>
-
-              <input
-                type="text"
-                id="theater"
-                class="form-control neon-input"
-                placeholder="Enter Theater Name"
-              >
-
-            </div>
-
-            <!-- TICKET PRICE -->
-
-            <div class="col-md-4 mb-3">
-
-              <label class="form-label">
-                Ticket Price
-              </label>
-
-              <input
-                type="number"
-                id="ticketPrice"
-                class="form-control neon-input"
-                placeholder="Enter Ticket Price"
-              >
-
-            </div>
-
-            <!-- ROWS -->
-
-            <div class="col-md-4 mb-3">
-
-              <label class="form-label">
-                Rows
-              </label>
-
-              <input
-                type="number"
-                id="rows"
-                class="form-control neon-input"
-                placeholder="Enter Rows"
-              >
-
-            </div>
-
-            <!-- COLUMNS -->
-
-            <div class="col-md-4 mb-3">
-
-              <label class="form-label">
-                Columns
-              </label>
-
-              <input
-                type="number"
-                id="cols"
-                class="form-control neon-input"
-                placeholder="Enter Columns"
-              >
-
-            </div>
-
-            <!-- WALKWAY -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Walkway After Seats
-              </label>
-
-              <input
-                type="number"
-                id="walkwayAfter"
-                class="form-control neon-input"
-                placeholder="Example: 4"
-              >
-
-            </div>
-
-            <!-- WALKWAY TYPE -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Walkway Type
-              </label>
-
-              <select
-                id="walkwayType"
-                class="form-control neon-input"
-              >
-
-                <option value="vertical">
-                  Vertical Walkway
-                </option>
-
-                <option value="horizontal">
-                  Horizontal Walkway
-                </option>
-
-              </select>
-
-            </div>
-
-            <!-- START DATE -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Movie Start Date
-              </label>
-
-              <input
-                type="date"
-                id="startDate"
-                class="form-control neon-input"
-              >
-
-            </div>
-
-            <!-- SHOW TIME -->
-
-            <div class="col-md-6 mb-3">
-
-              <label class="form-label">
-                Show Time
-              </label>
-
-              <input
-                type="time"
-                id="showTime"
-                class="form-control neon-input"
-              >
-
-            </div>
-
-          </div>
-
-          <button
-            class="btn neon-btn-green"
-            id="addMovieBtn"
-          >
-            Add Movie
-          </button>
-
-        </div>
-
-        <!-- MOVIES -->
-
-        <div
-          class="row"
-          id="moviesContainer"
-        ></div>
+        <h1 class="neon-heading">
+          🎬 Movie Management
+        </h1>
 
       </div>
 
-      <!-- USERS SECTION -->
+      <!-- ADD / UPDATE MOVIE -->
 
-      <div
-        id="usersSection"
-        style="display:none;"
-      >
+      <div class="neon-card p-4 mb-5">
 
-        <div class="neon-card p-4">
+        <h3 class="neon-heading mb-4">
 
-          <h3 class="neon-heading mb-4">
-            Registered Users
-          </h3>
+          ➕ Add / Update Movie
 
-          <div class="table-responsive">
+        </h3>
 
-            <table
-              class="table table-dark table-bordered"
+        <div class="row">
+
+          <!-- MOVIE NAME -->
+
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label text-light">
+              Movie Name
+            </label>
+
+            <input
+              type="text"
+              id="movieName"
+              class="form-control neon-input"
+              placeholder="Enter Movie Name"
             >
 
-              <thead>
+          </div>
 
-                <tr>
+          <!-- POSTER -->
 
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Address</th>
+          <div class="col-md-6 mb-3">
 
-                </tr>
+            <label class="form-label text-light">
+              Poster URL
+            </label>
 
-              </thead>
+            <input
+              type="text"
+              id="posterUrl"
+              class="form-control neon-input"
+              placeholder="Enter Poster URL"
+            >
 
-              <tbody id="usersTable"></tbody>
+          </div>
 
-            </table>
+          <!-- PLACE -->
+
+          <div class="col-md-4 mb-3">
+
+            <label class="form-label text-light">
+              Place Name
+            </label>
+
+            <input
+              type="text"
+              id="place"
+              class="form-control neon-input"
+              placeholder="Enter Place"
+            >
+
+          </div>
+
+          <!-- THEATER -->
+
+          <div class="col-md-4 mb-3">
+
+            <label class="form-label text-light">
+              Theater Name
+            </label>
+
+            <input
+              type="text"
+              id="theater"
+              class="form-control neon-input"
+              placeholder="Enter Theater"
+            >
+
+          </div>
+
+          <!-- PRICE -->
+
+          <div class="col-md-4 mb-3">
+
+            <label class="form-label text-light">
+              Ticket Price
+            </label>
+
+            <input
+              type="number"
+              id="ticketPrice"
+              class="form-control neon-input"
+              placeholder="Enter Ticket Price"
+            >
+
+          </div>
+
+          <!-- ROWS -->
+
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label text-light">
+              Rows
+            </label>
+
+            <input
+              type="number"
+              id="rows"
+              class="form-control neon-input"
+              placeholder="Rows"
+            >
+
+          </div>
+
+          <!-- COLS -->
+
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label text-light">
+              Columns
+            </label>
+
+            <input
+              type="number"
+              id="cols"
+              class="form-control neon-input"
+              placeholder="Columns"
+            >
+
+          </div>
+
+          <!-- WALKWAY TYPE -->
+
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label text-light">
+              Walkway Type
+            </label>
+
+            <select
+              id="walkwayType"
+              class="form-select neon-input"
+            >
+
+              <option value="vertical">
+                Vertical
+              </option>
+
+              <option value="horizontal">
+                Horizontal
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- WALKWAY AFTER -->
+
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label text-light">
+              Walkway After Seats
+            </label>
+
+            <input
+              type="number"
+              id="walkwayAfter"
+              class="form-control neon-input"
+              placeholder="Ex: 5"
+            >
+
+          </div>
+
+          <!-- SHOW DATE -->
+
+          <div class="col-md-4 mb-3">
+
+            <label class="form-label text-light">
+              Movie Release Date
+            </label>
+
+            <input
+              type="date"
+              id="showDate"
+              class="form-control neon-input"
+            >
+
+          </div>
+
+          <!-- SHOW TIME -->
+
+          <div class="col-md-4 mb-3">
+
+            <label class="form-label text-light">
+              Show Time
+            </label>
+
+            <input
+              type="time"
+              id="showTime"
+              class="form-control neon-input"
+            >
+
+          </div>
+
+          <!-- BOOKING OPEN DAYS -->
+
+          <div class="col-md-4 mb-3">
+
+            <label class="form-label text-light">
+              Booking Opens Before (Days)
+            </label>
+
+            <input
+              type="number"
+              id="bookingOpenDays"
+              class="form-control neon-input"
+              placeholder="1"
+              value="1"
+            >
 
           </div>
 
         </div>
 
+        <!-- BUTTON -->
+
+        <button
+          class="btn neon-btn w-100 mt-3"
+          id="addMovieBtn"
+        >
+          Add Movie
+        </button>
+
       </div>
 
-      <!-- UPI SECTION -->
+      <!-- PAYMENT SETTINGS -->
 
-      <div
-        id="upiSection"
-        style="display:none;"
-      >
+      <div class="neon-card p-4 mb-5">
 
-        <div class="neon-card p-4">
+        <h3 class="neon-heading mb-4">
 
-          <h3 class="neon-heading mb-4">
-            UPI Payment Settings
-          </h3>
+          💳 UPI Payment Settings
 
-          <div class="mb-3">
+        </h3>
 
-            <label class="form-label">
+        <div class="row">
+
+          <!-- UPI ID -->
+
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label text-light">
               UPI ID
             </label>
 
@@ -364,14 +338,16 @@
               type="text"
               id="upiId"
               class="form-control neon-input"
-              placeholder="Enter UPI ID"
+              placeholder="example@upi"
             >
 
           </div>
 
-          <div class="mb-3">
+          <!-- UPI NAME -->
 
-            <label class="form-label">
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label text-light">
               Account Holder Name
             </label>
 
@@ -379,27 +355,40 @@
               type="text"
               id="upiName"
               class="form-control neon-input"
-              placeholder="Enter Holder Name"
+              placeholder="Enter Name"
             >
 
           </div>
 
-          <button
-            class="btn neon-btn-green"
-            id="saveUpiBtn"
-          >
-            Save UPI Settings
-          </button>
-
         </div>
 
+        <button
+          class="btn btn-success w-100"
+          id="saveUpiBtn"
+        >
+          Save UPI Settings
+        </button>
+
       </div>
+
+      <!-- MOVIES -->
+
+      <h2 class="neon-heading mb-4">
+        🎥 Added Movies
+      </h2>
+
+      <div
+        class="row"
+        id="moviesContainer"
+      ></div>
 
     </div>
 
   </div>
 
 </div>
+
+<!-- SCRIPT -->
 
 <script
   type="module"

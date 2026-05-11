@@ -4,7 +4,6 @@ import {
 } from './firebase.js';
 
 import {
-  onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
@@ -14,16 +13,49 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  setDoc,
-  getDoc
+  updateDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // ======================
 // ELEMENTS
 // ======================
 
-const logoutBtn =
-document.getElementById('logoutBtn');
+const movieName =
+document.getElementById('movieName');
+
+const posterUrl =
+document.getElementById('posterUrl');
+
+const place =
+document.getElementById('place');
+
+const theater =
+document.getElementById('theater');
+
+const ticketPrice =
+document.getElementById('ticketPrice');
+
+const rows =
+document.getElementById('rows');
+
+const cols =
+document.getElementById('cols');
+
+const walkwayType =
+document.getElementById('walkwayType');
+
+const walkwayAfter =
+document.getElementById('walkwayAfter');
+
+const showTime =
+document.getElementById('showTime');
+
+const showDate =
+document.getElementById('showDate');
+
+const bookingOpenDays =
+document.getElementById('bookingOpenDays');
 
 const addMovieBtn =
 document.getElementById('addMovieBtn');
@@ -31,285 +63,143 @@ document.getElementById('addMovieBtn');
 const moviesContainer =
 document.getElementById('moviesContainer');
 
-const usersTable =
-document.getElementById('usersTable');
+const logoutBtn =
+document.getElementById('logoutBtn');
+
+const upiId =
+document.getElementById('upiId');
+
+const upiName =
+document.getElementById('upiName');
 
 const saveUpiBtn =
 document.getElementById('saveUpiBtn');
 
 // ======================
-// SECTIONS
+// EDIT MODE
 // ======================
 
-const moviesSection =
-document.getElementById('moviesSection');
-
-const usersSection =
-document.getElementById('usersSection');
-
-const upiSection =
-document.getElementById('upiSection');
-
-// ======================
-// TAB BUTTONS
-// ======================
-
-const moviesTabBtn =
-document.getElementById('moviesTabBtn');
-
-const usersTabBtn =
-document.getElementById('usersTabBtn');
-
-const upiTabBtn =
-document.getElementById('upiTabBtn');
-
-// ======================
-// EDITING MODE
-// ======================
-
-let editingMovieId = null;
-
-// ======================
-// AUTH CHECK
-// ======================
-
-onAuthStateChanged(auth, (user) => {
-
-  if(!user){
-
-    window.location.href =
-    './index.html';
-
-    return;
-  }
-
-  loadMovies();
-
-  loadUsers();
-
-});
+let editMovieId = null;
 
 // ======================
 // LOGOUT
 // ======================
 
-logoutBtn.addEventListener('click', async () => {
+logoutBtn.addEventListener(
+  'click',
+  async () => {
 
-  await signOut(auth);
+    await signOut(auth);
 
-  window.location.href =
-  './index.html';
+    window.location.href =
+    './index.html';
 
-});
-
-// ======================
-// TAB SWITCHING
-// ======================
-
-moviesTabBtn.addEventListener('click', () => {
-
-  moviesSection.style.display =
-  'block';
-
-  usersSection.style.display =
-  'none';
-
-  upiSection.style.display =
-  'none';
-
-});
-
-usersTabBtn.addEventListener('click', () => {
-
-  moviesSection.style.display =
-  'none';
-
-  usersSection.style.display =
-  'block';
-
-  upiSection.style.display =
-  'none';
-
-});
-
-upiTabBtn.addEventListener('click', () => {
-
-  moviesSection.style.display =
-  'none';
-
-  usersSection.style.display =
-  'none';
-
-  upiSection.style.display =
-  'block';
-
-});
+  }
+);
 
 // ======================
 // ADD / UPDATE MOVIE
 // ======================
 
-addMovieBtn.addEventListener('click', async () => {
-
-  const movieName =
-  document.getElementById('movieName').value;
-
-  const posterUrl =
-  document.getElementById('posterUrl').value;
-
-  const place =
-  document.getElementById('place').value;
-
-  const theater =
-  document.getElementById('theater').value;
-
-  const ticketPrice =
-  document.getElementById('ticketPrice').value;
-
-  const rows =
-  document.getElementById('rows').value;
-
-  const cols =
-  document.getElementById('cols').value;
-
-  const walkwayAfter =
-  document.getElementById('walkwayAfter').value;
-
-  const walkwayType =
-  document.getElementById('walkwayType').value;
-
-  const startDate =
-  document.getElementById('startDate').value;
-
-  const showTime =
-  document.getElementById('showTime').value;
-
-  if(
-    !movieName ||
-    !posterUrl ||
-    !place ||
-    !theater
-  ){
-
-    alert('Fill All Fields');
-
-    return;
-  }
-
-  addMovieBtn.disabled = true;
-
-  // ======================
-  // UPDATE MODE
-  // ======================
-
-  if(editingMovieId){
-
-    addMovieBtn.innerHTML =
-    'Updating Movie...';
+addMovieBtn.addEventListener(
+  'click',
+  async () => {
 
     try {
 
-      await setDoc(
-        doc(db, 'movies', editingMovieId),
-        {
-
-          movieName,
-          posterUrl,
-          place,
-          theater,
-
-          ticketPrice:
-          Number(ticketPrice),
-
-          rows:
-          Number(rows),
-
-          cols:
-          Number(cols),
-
-          walkwayAfter:
-          Number(walkwayAfter),
-
-          walkwayType,
-
-          startDate,
-
-          showTime,
-
-          active:true
-
-        }
-
-      );
+      addMovieBtn.disabled = true;
 
       addMovieBtn.innerHTML =
-      'Movie Updated ✓';
+      editMovieId
+      ?
+      'Updating Movie...'
+      :
+      'Adding Movie...';
 
-      editingMovieId = null;
+      const movieData = {
 
-      clearMovieForm();
+        movieName:
+        movieName.value,
 
-      loadMovies();
+        posterUrl:
+        posterUrl.value,
 
-    } catch(error){
+        place:
+        place.value,
 
-      console.log(error);
-
-      alert(error.message);
-
-    }
-
-  }
-
-  // ======================
-  // ADD MODE
-  // ======================
-
-  else {
-
-    addMovieBtn.innerHTML =
-    'Adding Movie...';
-
-    try {
-
-      await addDoc(collection(db, 'movies'), {
-
-        movieName,
-        posterUrl,
-        place,
-        theater,
+        theater:
+        theater.value,
 
         ticketPrice:
-        Number(ticketPrice),
+        Number(ticketPrice.value),
 
         rows:
-        Number(rows),
+        Number(rows.value),
 
         cols:
-        Number(cols),
+        Number(cols.value),
+
+        walkwayType:
+        walkwayType.value,
 
         walkwayAfter:
-        Number(walkwayAfter),
+        Number(walkwayAfter.value),
 
-        walkwayType,
+        showTime:
+        showTime.value,
 
-        startDate,
+        showDate:
+        showDate.value,
 
-        showTime,
+        bookingOpenDays:
+        Number(
+          bookingOpenDays.value
+        )
 
-        active:true,
+      };
 
-        createdAt:
-        new Date()
+      // UPDATE
 
-      });
+      if(editMovieId){
+
+        await updateDoc(
+          doc(
+            db,
+            'movies',
+            editMovieId
+          ),
+          movieData
+        );
+
+        alert(
+          'Movie Updated Successfully'
+        );
+
+      }
+
+      // ADD
+
+      else {
+
+        await addDoc(
+          collection(db, 'movies'),
+          movieData
+        );
+
+        alert(
+          'Movie Added Successfully'
+        );
+
+      }
+
+      // RESET
+
+      editMovieId = null;
 
       addMovieBtn.innerHTML =
-      'Movie Added ✓';
+      'Add Movie';
 
-      clearMovieForm();
-
-      loadMovies();
+      location.reload();
 
     } catch(error){
 
@@ -320,13 +210,7 @@ addMovieBtn.addEventListener('click', async () => {
     }
 
   }
-
-  addMovieBtn.disabled = false;
-
-  addMovieBtn.innerHTML =
-  'Add Movie';
-
-});
+);
 
 // ======================
 // LOAD MOVIES
@@ -337,27 +221,27 @@ async function loadMovies(){
   moviesContainer.innerHTML = '';
 
   const querySnapshot =
-  await getDocs(collection(db, 'movies'));
+  await getDocs(
+    collection(db, 'movies')
+  );
 
   querySnapshot.forEach((docSnap) => {
 
-    const movie = {
-      id: docSnap.id,
-      ...docSnap.data()
-    };
+    const movie = docSnap.data();
 
     moviesContainer.innerHTML += `
 
       <div class="col-md-4 mb-4">
 
-        <div class="neon-card movie-card p-3 h-100">
+        <div class="neon-card p-3 h-100">
 
           <img
             src="${movie.posterUrl}"
             class="img-fluid rounded mb-3"
             style="
-              height:350px;
+              height:300px;
               object-fit:cover;
+              width:100%;
             "
           >
 
@@ -365,49 +249,44 @@ async function loadMovies(){
             ${movie.movieName}
           </h4>
 
-          <p>
+          <p class="text-light">
             📍 ${movie.place}
           </p>
 
-          <p>
+          <p class="text-light">
             🎬 ${movie.theater}
           </p>
 
-          <p>
-            💰 ₹${movie.ticketPrice}
+          <p class="text-light">
+            📅 ${movie.showDate}
           </p>
 
-          <p>
-            🪑 ${movie.rows} x ${movie.cols}
-          </p>
-
-          <p>
-            🚶 ${movie.walkwayType}
-            after
-            ${movie.walkwayAfter}
-            seats
-          </p>
-
-          <p>
-            📅 ${movie.startDate}
-          </p>
-
-          <p>
+          <p class="text-light">
             🕒 ${movie.showTime}
           </p>
 
-          <div class="d-flex gap-2 mt-3">
+          <p class="text-light">
+            🎟 Booking Opens:
+            ${movie.bookingOpenDays}
+            day(s) before
+          </p>
+
+          <p class="text-light">
+            💰 ₹${movie.ticketPrice}
+          </p>
+
+          <div class="d-flex gap-2">
 
             <button
-              class="btn neon-btn-green w-50"
-              onclick="editMovie('${movie.id}')"
+              class="btn btn-warning w-50"
+              onclick="editMovie('${docSnap.id}')"
             >
               Edit
             </button>
 
             <button
               class="btn btn-danger w-50"
-              onclick="deleteMovie('${movie.id}')"
+              onclick="deleteMovie('${docSnap.id}')"
             >
               Delete
             </button>
@@ -429,85 +308,86 @@ async function loadMovies(){
 // ======================
 
 window.editMovie =
-async (id) => {
+async function(id){
 
-  const movieRef =
-  doc(db, 'movies', id);
+  const querySnapshot =
+  await getDocs(
+    collection(db, 'movies')
+  );
 
-  const movieSnap =
-  await getDoc(movieRef);
+  querySnapshot.forEach((docSnap) => {
 
-  if(!movieSnap.exists()){
+    if(docSnap.id === id){
 
-    return;
-  }
+      const movie =
+      docSnap.data();
 
-  const movie =
-  movieSnap.data();
+      movieName.value =
+      movie.movieName;
 
-  editingMovieId = id;
+      posterUrl.value =
+      movie.posterUrl;
 
-  // AUTO FILL FORM
+      place.value =
+      movie.place;
 
-  document.getElementById('movieName').value =
-  movie.movieName;
+      theater.value =
+      movie.theater;
 
-  document.getElementById('posterUrl').value =
-  movie.posterUrl;
+      ticketPrice.value =
+      movie.ticketPrice;
 
-  document.getElementById('place').value =
-  movie.place;
+      rows.value =
+      movie.rows;
 
-  document.getElementById('theater').value =
-  movie.theater;
+      cols.value =
+      movie.cols;
 
-  document.getElementById('ticketPrice').value =
-  movie.ticketPrice;
+      walkwayType.value =
+      movie.walkwayType;
 
-  document.getElementById('rows').value =
-  movie.rows;
+      walkwayAfter.value =
+      movie.walkwayAfter;
 
-  document.getElementById('cols').value =
-  movie.cols;
+      showTime.value =
+      movie.showTime;
 
-  document.getElementById('walkwayAfter').value =
-  movie.walkwayAfter;
+      showDate.value =
+      movie.showDate;
 
-  document.getElementById('walkwayType').value =
-  movie.walkwayType;
+      bookingOpenDays.value =
+      movie.bookingOpenDays;
 
-  document.getElementById('startDate').value =
-  movie.startDate;
+      editMovieId = id;
 
-  document.getElementById('showTime').value =
-  movie.showTime;
+      addMovieBtn.innerHTML =
+      'Update Movie';
 
-  // CHANGE BUTTON
+      window.scrollTo({
 
-  addMovieBtn.innerHTML =
-  'Update Movie';
+        top:0,
 
-  // SCROLL TOP
+        behavior:'smooth'
 
-  window.scrollTo({
+      });
 
-    top:0,
-
-    behavior:'smooth'
+    }
 
   });
 
-};
+}
 
 // ======================
 // DELETE MOVIE
 // ======================
 
 window.deleteMovie =
-async (id) => {
+async function(id){
 
   const confirmDelete =
-  confirm('Delete Movie?');
+  confirm(
+    'Delete this movie?'
+  );
 
   if(!confirmDelete){
 
@@ -520,99 +400,36 @@ async (id) => {
 
   loadMovies();
 
-};
-
-// ======================
-// LOAD USERS
-// ======================
-
-async function loadUsers(){
-
-  usersTable.innerHTML = '';
-
-  const querySnapshot =
-  await getDocs(collection(db, 'users'));
-
-  querySnapshot.forEach((docSnap) => {
-
-    const user =
-    docSnap.data();
-
-    usersTable.innerHTML += `
-
-      <tr>
-
-        <td>${user.name || '-'}</td>
-
-        <td>${user.email || '-'}</td>
-
-        <td>${user.phone || '-'}</td>
-
-        <td>${user.address || '-'}</td>
-
-      </tr>
-
-    `;
-
-  });
-
 }
 
 // ======================
 // SAVE UPI
 // ======================
 
-saveUpiBtn.addEventListener('click', async () => {
+saveUpiBtn.addEventListener(
+  'click',
+  async () => {
 
-  const upiId =
-  document.getElementById('upiId').value;
+    await setDoc(
+      doc(db, 'settings', 'upi'),
+      {
 
-  const upiName =
-  document.getElementById('upiName').value;
+        upiId:
+        upiId.value,
 
-  if(!upiId){
+        upiName:
+        upiName.value
 
-    alert('Enter UPI ID');
+      }
+    );
 
-    return;
+    alert('UPI Saved');
+
   }
-
-  await setDoc(
-    doc(db, 'settings', 'upi'),
-    {
-      upiId,
-      upiName
-    }
-  );
-
-  alert('UPI Updated');
-
-});
+);
 
 // ======================
-// CLEAR FORM
+// INIT
 // ======================
 
-function clearMovieForm(){
-
-  document.getElementById('movieName').value = '';
-
-  document.getElementById('posterUrl').value = '';
-
-  document.getElementById('place').value = '';
-
-  document.getElementById('theater').value = '';
-
-  document.getElementById('ticketPrice').value = '';
-
-  document.getElementById('rows').value = '';
-
-  document.getElementById('cols').value = '';
-
-  document.getElementById('walkwayAfter').value = '';
-
-  document.getElementById('startDate').value = '';
-
-  document.getElementById('showTime').value = '';
-
-}
+loadMovies();
