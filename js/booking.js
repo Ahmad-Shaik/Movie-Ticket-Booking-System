@@ -150,13 +150,11 @@ async function loadMovie(){
   bookingDate.min =
   movieData.startDate;
 
-  // GENERATE SEATS
+  // LOAD DATA
 
   await loadBookedSeats();
 
   generateSeats();
-
-  // LOAD UPI
 
   loadUpi();
 
@@ -223,7 +221,7 @@ function generateSeats(){
 
     for(let c = 0; c < cols; c++){
 
-      // WALKWAY
+      // VERTICAL WALKWAY
 
       if(
         walkwayType === 'vertical'
@@ -358,18 +356,27 @@ function toggleSeat(
 function updateSummary(){
 
   selectedSeatsText.innerHTML =
+
   selectedSeats.join(', ')
   || 'None';
 
-  totalPriceText.innerHTML =
+  const total =
+
   selectedSeats.length
   *
   movieData.ticketPrice;
 
+  totalPriceText.innerHTML =
+  total;
+
+  // UPDATE QR LIVE
+
+  loadUpi();
+
 }
 
 // ======================
-// LOAD UPI
+// LOAD UPI + QR
 // ======================
 
 async function loadUpi(){
@@ -382,27 +389,42 @@ async function loadUpi(){
 
   if(!upiSnap.exists()){
 
+    upiText.innerHTML =
+    'UPI Not Configured';
+
     return;
   }
 
   const upi =
   upiSnap.data();
 
-  upiText.innerHTML =
-  upi.upiId;
-
   const amount =
+
   selectedSeats.length
   *
   movieData.ticketPrice;
 
+  upiText.innerHTML = `
+    Pay Using:
+    ${upi.upiId}
+  `;
+
+  // UPI LINK
+
+  const upiLink =
+
+  `upi://pay?pa=${upi.upiId}&pn=${upi.upiName}&am=${amount}&cu=INR`;
+
+  // QR GENERATION
+
   qrCode.src =
-  `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=${upi.upiId}&pn=${upi.upiName}&am=${amount}`;
+
+  `https://quickchart.io/qr?text=${encodeURIComponent(upiLink)}&size=250`;
 
 }
 
 // ======================
-// BOOK TICKETS
+// CONFIRM BOOKING
 // ======================
 
 confirmBookingBtn.addEventListener(
@@ -414,6 +436,15 @@ confirmBookingBtn.addEventListener(
     ){
 
       alert('Select Seats');
+
+      return;
+    }
+
+    if(
+      bookingDate.value === ''
+    ){
+
+      alert('Select Booking Date');
 
       return;
     }
@@ -441,6 +472,9 @@ confirmBookingBtn.addEventListener(
 
           bookingDate:
           bookingDate.value,
+
+          showTime:
+          bookingTime.value,
 
           totalPrice:
           selectedSeats.length
