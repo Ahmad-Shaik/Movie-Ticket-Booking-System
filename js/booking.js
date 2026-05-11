@@ -370,18 +370,12 @@ function renderSeats(){
   movie.rows || 10;
 
   const totalCols =
-  movie.cols || 12;
+  movie.cols || 16;
 
-  // WALKWAY SETTINGS
+  // DYNAMIC WALKWAYS FROM ADMIN
 
-  const leftGapAfter =
-  movie.leftGapAfter || 3;
-
-  const centerGapAfter =
-  movie.centerGapAfter || 6;
-
-  const rightGapAfter =
-  movie.rightGapAfter || 9;
+  const walkways =
+  movie.walkways || [];
 
   for(
     let r = 1;
@@ -417,43 +411,36 @@ function renderSeats(){
       c++
     ){
 
-      // LEFT WALKWAY
+      // CREATE WALKWAYS
 
-      if(c === leftGapAfter + 1){
-
-        const gap =
-        document.createElement('div');
-
-        gap.style.width =
-        '20px';
-
-        row.appendChild(gap);
-
-      }
-
-      // CENTER WALKWAY
-
-      if(c === centerGapAfter + 1){
-
-        const centerGap =
-        document.createElement('div');
-
-        centerGap.style.width =
-        '50px';
-
-        row.appendChild(centerGap);
-
-      }
-
-      // RIGHT WALKWAY
-
-      if(c === rightGapAfter + 1){
+      if(
+        walkways.includes(c)
+      ){
 
         const gap =
         document.createElement('div');
 
-        gap.style.width =
-        '20px';
+        // CENTER GAP BIGGER
+
+        if(
+          c === walkways[
+            Math.floor(
+              walkways.length / 2
+            )
+          ]
+        ){
+
+          gap.style.width =
+          '60px';
+
+        }
+
+        else{
+
+          gap.style.width =
+          '25px';
+
+        }
 
         row.appendChild(gap);
 
@@ -529,7 +516,6 @@ function renderSeats(){
   }
 
 }
-
 
 // ======================
 // TOGGLE SEATS
