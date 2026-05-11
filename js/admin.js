@@ -59,14 +59,14 @@ document.getElementById('runDays');
 const bookingOpenDays =
 document.getElementById('bookingOpenDays');
 
-const showsPerDay =
-document.getElementById('showsPerDay');
-
-const showNumber =
-document.getElementById('showNumber');
-
 const showTime =
 document.getElementById('showTime');
+
+const movieDuration =
+document.getElementById('movieDuration');
+
+const closingTime =
+document.getElementById('closingTime');
 
 const intervalTime =
 document.getElementById('intervalTime');
@@ -105,6 +105,96 @@ document.getElementById('saveUpiBtn');
 let editMovieId = null;
 
 // ======================
+// TIME HELPERS
+// ======================
+
+function convertToMinutes(time){
+
+  const parts =
+  time.split(':');
+
+  return (
+    Number(parts[0]) * 60 +
+    Number(parts[1])
+  );
+
+}
+
+function minutesToTime(minutes){
+
+  const hrs =
+  Math.floor(minutes / 60);
+
+  const mins =
+  minutes % 60;
+
+  return `${
+    String(hrs).padStart(2,'0')
+  }:${
+    String(mins).padStart(2,'0')
+  }`;
+
+}
+
+// ======================
+// AUTO GENERATE SHOWS
+// ======================
+
+function generateShows(){
+
+  const shows = [];
+
+  let current =
+  convertToMinutes(
+    showTime.value
+  );
+
+  const close =
+  convertToMinutes(
+    closingTime.value
+  );
+
+  const duration =
+  Number(movieDuration.value);
+
+  const interval =
+  Number(intervalTime.value);
+
+  const cleaning =
+  Number(cleaningTime.value);
+
+  let count = 1;
+
+  while(
+
+    current + duration <= close
+
+  ){
+
+    shows.push({
+
+      showName:
+      `${count} Show`,
+
+      startTime:
+      minutesToTime(current)
+
+    });
+
+    current +=
+    duration +
+    interval +
+    cleaning;
+
+    count++;
+
+  }
+
+  return shows;
+
+}
+
+// ======================
 // LOGOUT
 // ======================
 
@@ -138,10 +228,6 @@ addMovieBtn.addEventListener(
       'Updating Movie...'
       :
       'Adding Movie...';
-
-      // ======================
-      // MOVIE DATA
-      // ======================
 
       const movieData = {
 
@@ -183,16 +269,16 @@ addMovieBtn.addEventListener(
           bookingOpenDays.value
         ),
 
-        showsPerDay:
-        Number(
-          showsPerDay.value
-        ),
-
-        showNumber:
-        showNumber.value,
-
         showTime:
         showTime.value,
+
+        movieDuration:
+        Number(
+          movieDuration.value
+        ),
+
+        closingTime:
+        closingTime.value,
 
         intervalTime:
         Number(
@@ -202,23 +288,27 @@ addMovieBtn.addEventListener(
         cleaningTime:
         Number(
           cleaningTime.value
-        )
+        ),
+
+        shows:
+        generateShows()
 
       };
 
-      // ======================
       // UPDATE
-      // ======================
 
       if(editMovieId){
 
         await updateDoc(
+
           doc(
             db,
             'movies',
             editMovieId
           ),
+
           movieData
+
         );
 
         alert(
@@ -227,15 +317,19 @@ addMovieBtn.addEventListener(
 
       }
 
-      // ======================
       // ADD
-      // ======================
 
       else {
 
         await addDoc(
-          collection(db, 'movies'),
+
+          collection(
+            db,
+            'movies'
+          ),
+
           movieData
+
         );
 
         alert(
@@ -243,11 +337,6 @@ addMovieBtn.addEventListener(
         );
 
       }
-
-      editMovieId = null;
-
-      addMovieBtn.innerHTML =
-      'Add Movie';
 
       location.reload();
 
@@ -319,37 +408,66 @@ async function loadMovies(){
           </p>
 
           <p class="text-light">
-            🎭 ${movie.showNumber}
+            🕒 First Show:
+            ${movie.showTime}
           </p>
 
           <p class="text-light">
-            🕒 ${movie.showTime}
+            🎞 Duration:
+            ${movie.movieDuration}
+            mins
           </p>
 
           <p class="text-light">
-            🎬 ${movie.showsPerDay}
-            Shows Daily
+            🏢 Closes:
+            ${movie.closingTime}
           </p>
 
           <p class="text-light">
             ⏸ Interval:
-            ${movie.intervalTime} mins
+            ${movie.intervalTime}
+            mins
           </p>
 
           <p class="text-light">
             🧹 Cleaning:
-            ${movie.cleaningTime} mins
+            ${movie.cleaningTime}
+            mins
           </p>
 
           <p class="text-light">
             🎟 Booking Opens:
             ${movie.bookingOpenDays}
-            Day(s) Before
+            day(s) before
           </p>
 
-          <p class="text-light">
-            💰 ₹${movie.ticketPrice}
-          </p>
+          <div class="mb-3">
+
+            ${
+              movie.shows
+              ?
+              movie.shows.map(show => `
+
+                <div class="
+                  badge
+                  bg-info
+                  text-dark
+                  me-1
+                  mb-1
+                ">
+
+                  ${show.showName}
+                  -
+                  ${show.startTime}
+
+                </div>
+
+              `).join('')
+              :
+              ''
+            }
+
+          </div>
 
           <div class="d-flex gap-2">
 
@@ -466,7 +584,7 @@ async function loadBookings(){
         </td>
 
         <td>
-          ${booking.showNumber || ''}
+          ${booking.selectedShow || ''}
         </td>
 
         <td>
@@ -536,14 +654,14 @@ async function(id){
       bookingOpenDays.value =
       movie.bookingOpenDays;
 
-      showsPerDay.value =
-      movie.showsPerDay;
-
-      showNumber.value =
-      movie.showNumber;
-
       showTime.value =
       movie.showTime;
+
+      movieDuration.value =
+      movie.movieDuration;
+
+      closingTime.value =
+      movie.closingTime;
 
       intervalTime.value =
       movie.intervalTime;
@@ -608,7 +726,13 @@ saveUpiBtn.addEventListener(
   async () => {
 
     await setDoc(
-      doc(db, 'settings', 'upi'),
+
+      doc(
+        db,
+        'settings',
+        'upi'
+      ),
+
       {
 
         upiId:
@@ -618,6 +742,7 @@ saveUpiBtn.addEventListener(
         upiName.value
 
       }
+
     );
 
     alert(

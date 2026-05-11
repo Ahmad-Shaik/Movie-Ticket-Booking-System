@@ -78,7 +78,7 @@
 
     <div class="col-lg-10 col-md-9 p-4">
 
-      <!-- TOP -->
+      <!-- TOP BAR -->
 
       <div class="d-flex justify-content-between align-items-center mb-5">
 
@@ -219,7 +219,7 @@
 
             </div>
 
-            <!-- WALKWAY TYPE -->
+            <!-- WALKWAY -->
 
             <div class="col-md-3 mb-3">
 
@@ -292,7 +292,7 @@
 
             </div>
 
-            <!-- BOOKING DAYS -->
+            <!-- BOOKING OPEN -->
 
             <div class="col-md-4 mb-3">
 
@@ -309,70 +309,49 @@
 
             </div>
 
-            <!-- SHOWS -->
+            <!-- FIRST SHOW -->
 
             <div class="col-md-4 mb-3">
 
               <label class="form-label text-light">
-                Shows Per Day
-              </label>
-
-              <input
-                type="number"
-                id="showsPerDay"
-                class="form-control neon-input"
-              >
-
-            </div>
-
-            <!-- SHOW NUMBER -->
-
-            <div class="col-md-4 mb-3">
-
-              <label class="form-label text-light">
-                Show Number
-              </label>
-
-              <select
-                id="showNumber"
-                class="form-select neon-input"
-              >
-
-                <option value="1st Show">
-                  1st Show
-                </option>
-
-                <option value="2nd Show">
-                  2nd Show
-                </option>
-
-                <option value="3rd Show">
-                  3rd Show
-                </option>
-
-                <option value="4th Show">
-                  4th Show
-                </option>
-
-                <option value="5th Show">
-                  5th Show
-                </option>
-
-              </select>
-
-            </div>
-
-            <!-- TIME -->
-
-            <div class="col-md-4 mb-3">
-
-              <label class="form-label text-light">
-                Show Time
+                First Show Start Time
               </label>
 
               <input
                 type="time"
                 id="showTime"
+                class="form-control neon-input"
+              >
+
+            </div>
+
+            <!-- DURATION -->
+
+            <div class="col-md-4 mb-3">
+
+              <label class="form-label text-light">
+                Movie Duration (Minutes)
+              </label>
+
+              <input
+                type="number"
+                id="movieDuration"
+                class="form-control neon-input"
+              >
+
+            </div>
+
+            <!-- CLOSE -->
+
+            <div class="col-md-4 mb-3">
+
+              <label class="form-label text-light">
+                Theatre Closing Time
+              </label>
+
+              <input
+                type="time"
+                id="closingTime"
                 class="form-control neon-input"
               >
 
@@ -560,7 +539,7 @@
 
                   <th>Date</th>
 
-                  <th>Time</th>
+                  <th>Show</th>
 
                   <th>Amount</th>
 
