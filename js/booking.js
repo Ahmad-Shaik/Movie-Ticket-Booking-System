@@ -18,66 +18,66 @@ import {
 // ======================
 
 const params =
-new URLSearchParams(
-  window.location.search
-);
+  new URLSearchParams(
+    window.location.search
+  );
 
 const movieId =
-params.get('id');
+  params.get('id');
 
 // ======================
 // ELEMENTS
 // ======================
 
 const movieDetails =
-document.getElementById(
-  'movieDetails'
-);
+  document.getElementById(
+    'movieDetails'
+  );
 
 const dateSelect =
-document.getElementById(
-  'dateSelect'
-);
+  document.getElementById(
+    'dateSelect'
+  );
 
 const showSelect =
-document.getElementById(
-  'showSelect'
-);
+  document.getElementById(
+    'showSelect'
+  );
 
 const seatContainer =
-document.getElementById(
-  'seatContainer'
-);
+  document.getElementById(
+    'seatContainer'
+  );
 
 const paymentSection =
-document.getElementById(
-  'paymentSection'
-);
+  document.getElementById(
+    'paymentSection'
+  );
 
 const upiQr =
-document.getElementById(
-  'upiQr'
-);
+  document.getElementById(
+    'upiQr'
+  );
 
 const totalAmountText =
-document.getElementById(
-  'totalAmountText'
-);
+  document.getElementById(
+    'totalAmountText'
+  );
 
 const verifyPaymentBtn =
-document.getElementById(
-  'verifyPaymentBtn'
-);
+  document.getElementById(
+    'verifyPaymentBtn'
+  );
 
 const seatTimer =
-document.getElementById(
-  'seatTimer'
-);
+  document.getElementById(
+    'seatTimer'
+  );
 
 const timerText =
-document.getElementById(
-  'timerText'
-);
+  document.getElementById(
+    'timerText'
+  );
 
 // ======================
 // VARIABLES
@@ -103,17 +103,17 @@ let paymentExpired = false;
 // LOAD MOVIE
 // ======================
 
-async function loadMovie(){
+async function loadMovie() {
 
-  try{
+  try {
 
     const docRef =
-    doc(db, 'movies', movieId);
+      doc(db, 'movies', movieId);
 
     const docSnap =
-    await getDoc(docRef);
+      await getDoc(docRef);
 
-    if(!docSnap.exists()){
+    if (!docSnap.exists()) {
 
       movieDetails.innerHTML = `
         <h2 class="text-danger text-center">
@@ -128,7 +128,7 @@ async function loadMovie(){
     movie = docSnap.data();
 
     bookedSeats =
-    movie.bookedSeats || [];
+      movie.bookedSeats || [];
 
     movieDetails.innerHTML = `
 
@@ -178,7 +178,7 @@ async function loadMovie(){
 
   }
 
-  catch(error){
+  catch (error) {
 
     console.error(error);
 
@@ -196,33 +196,33 @@ async function loadMovie(){
 // DATES
 // ======================
 
-function generateDates(){
+function generateDates() {
 
   dateSelect.innerHTML = '';
 
   const startDate =
-  movie.showDate
-  ? new Date(movie.showDate)
-  : new Date();
+    movie.showDate
+      ? new Date(movie.showDate)
+      : new Date();
 
   const totalDays =
-  movie.runDays || 1;
+    movie.runDays || 1;
 
-  for(
+  for (
     let i = 0;
     i < totalDays;
     i++
-  ){
+  ) {
 
     const date =
-    new Date(startDate);
+      new Date(startDate);
 
     date.setDate(
       startDate.getDate() + i
     );
 
     const formatted =
-    date.toISOString().split('T')[0];
+      date.toISOString().split('T')[0];
 
     dateSelect.innerHTML += `
       <option value="${formatted}">
@@ -233,7 +233,7 @@ function generateDates(){
   }
 
   selectedDate =
-  dateSelect.value;
+    dateSelect.value;
 
 }
 
@@ -241,16 +241,16 @@ function generateDates(){
 // SHOWS
 // ======================
 
-function generateShows(){
+function generateShows() {
 
   showSelect.innerHTML = '';
 
   // USE FIRESTORE SHOWS
 
-  if(
+  if (
     movie.shows &&
     movie.shows.length > 0
-  ){
+  ) {
 
     movie.shows.forEach(show => {
 
@@ -269,7 +269,7 @@ function generateShows(){
     });
 
     selectedShow =
-    showSelect.value;
+      showSelect.value;
 
     return;
 
@@ -278,34 +278,34 @@ function generateShows(){
   // AUTO GENERATE SHOWS
 
   const firstShow =
-  movie.firstShowTime || '07:00';
+    movie.firstShowTime || '07:00';
 
   const totalShows =
-  movie.showsPerDay || 5;
+    movie.showsPerDay || 5;
 
   const movieDuration =
-  movie.movieDuration || 150;
+    movie.movieDuration || 150;
 
   const intervalTime =
-  movie.intervalTime || 20;
+    movie.intervalTime || 20;
 
   const cleaningTime =
-  movie.cleaningTime || 20;
+    movie.cleaningTime || 20;
 
   let currentTime =
-  convertToMinutes(firstShow);
+    convertToMinutes(firstShow);
 
-  for(
+  for (
     let i = 1;
     i <= totalShows;
     i++
-  ){
+  ) {
 
     const formattedTime =
-    convertTo12Hour(currentTime);
+      convertTo12Hour(currentTime);
 
     const showName =
-    `Show ${i}`;
+      `Show ${i}`;
 
     showSelect.innerHTML += `
 
@@ -320,41 +320,41 @@ function generateShows(){
     `;
 
     currentTime +=
-    movieDuration +
-    intervalTime +
-    cleaningTime;
+      movieDuration +
+      intervalTime +
+      cleaningTime;
 
   }
 
   selectedShow =
-  showSelect.value;
+    showSelect.value;
 
 }
 
-function convertToMinutes(time){
+function convertToMinutes(time) {
 
   const [hours, minutes] =
-  time.split(':').map(Number);
+    time.split(':').map(Number);
 
   return (hours * 60) + minutes;
 
 }
 
-function convertTo12Hour(totalMinutes){
+function convertTo12Hour(totalMinutes) {
 
   let hours =
-  Math.floor(totalMinutes / 60);
+    Math.floor(totalMinutes / 60);
 
   let minutes =
-  totalMinutes % 60;
+    totalMinutes % 60;
 
   const ampm =
-  hours >= 12 ? 'PM' : 'AM';
+    hours >= 12 ? 'PM' : 'AM';
 
   hours =
-  hours % 12 || 12;
+    hours % 12 || 12;
 
-  return `${hours}:${String(minutes).padStart(2,'0')} ${ampm}`;
+  return `${hours}:${String(minutes).padStart(2, '0')} ${ampm}`;
 
 }
 
@@ -362,15 +362,15 @@ function convertTo12Hour(totalMinutes){
 // RENDER SEATS
 // ======================
 
-function renderSeats(){
+function renderSeats() {
 
   seatContainer.innerHTML = '';
 
   const totalRows =
-  Number(movie.rows) || 10;
+    Number(movie.rows) || 10;
 
   const totalCols =
-  Number(movie.cols) || 12;
+    Number(movie.cols) || 12;
 
   // Example:
   // [4,8]
@@ -378,17 +378,26 @@ function renderSeats(){
   // gap AFTER 8
 
   const walkways =
-  Array.isArray(movie.walkways)
-  ? movie.walkways
-  : [];
+
+    typeof movie.walkways === 'string'
+
+      ? movie.walkways
+        .split(',')
+        .map(num => Number(num.trim()))
+
+      : Array.isArray(movie.walkways)
+
+        ? movie.walkways
+
+        : [];
 
   // SCREEN
 
   const screenDiv =
-  document.createElement('div');
+    document.createElement('div');
 
   screenDiv.className =
-  'text-center mb-5';
+    'text-center mb-5';
 
   screenDiv.innerHTML = `
 
@@ -413,64 +422,64 @@ function renderSeats(){
 
   // ROW LOOP
 
-  for(
+  for (
     let r = 1;
     r <= totalRows;
     r++
-  ){
+  ) {
 
     const rowDiv =
-    document.createElement('div');
+      document.createElement('div');
 
     rowDiv.className =
-    'd-flex justify-content-center align-items-center mb-2';
+      'd-flex justify-content-center align-items-center mb-2';
 
     // ROW NAME
 
     const rowLabel =
-    document.createElement('div');
+      document.createElement('div');
 
     rowLabel.style.width =
-    '30px';
+      '30px';
 
     rowLabel.className =
-    'text-light fw-bold me-3';
+      'text-light fw-bold me-3';
 
     rowLabel.innerHTML =
-    String.fromCharCode(64 + r);
+      String.fromCharCode(64 + r);
 
     rowDiv.appendChild(rowLabel);
 
     // SEAT LOOP
 
-    for(
+    for (
       let c = 1;
       c <= totalCols;
       c++
-    ){
+    ) {
 
       const seatId =
-      `${String.fromCharCode(64+r)}${c}`;
+        `${String.fromCharCode(64 + r)}${c}`;
 
       const seatBtn =
-      document.createElement('button');
+        document.createElement('button');
 
       seatBtn.innerHTML = c;
 
       seatBtn.className =
-      'btn seat-btn mx-1';
+        'btn seat-btn mx-1';
 
       seatBtn.style.width =
-      '42px';
+        '42px';
 
       seatBtn.style.height =
-      '42px';
+        '42px';
 
       // BOOKED
 
-      if(
+      if (
         bookedSeats.includes(seatId)
-      ){
+      ) {
 
         seatBtn.classList.add(
           'btn-danger'
@@ -482,9 +491,9 @@ function renderSeats(){
 
       // SELECTED
 
-      else if(
+      else if (
         selectedSeats.includes(seatId)
-      ){
+      ) {
 
         seatBtn.classList.add(
           'btn-success'
@@ -494,7 +503,7 @@ function renderSeats(){
 
       // AVAILABLE
 
-      else{
+      else {
 
         seatBtn.classList.add(
           'btn-outline-light'
@@ -514,12 +523,12 @@ function renderSeats(){
 
       // GAP AFTER SPECIFIED SEAT
 
-      if(
+      if (
         walkways.includes(c)
-      ){
+      ) {
 
         const gap =
-        document.createElement('div');
+          document.createElement('div');
 
         gap.style.width = '50px';
 
@@ -539,20 +548,20 @@ function renderSeats(){
 // TOGGLE SEATS
 // ======================
 
-function toggleSeat(seatId){
+function toggleSeat(seatId) {
 
-  if(
+  if (
     selectedSeats.includes(seatId)
-  ){
+  ) {
 
     selectedSeats =
-    selectedSeats.filter(
-      seat => seat !== seatId
-    );
+      selectedSeats.filter(
+        seat => seat !== seatId
+      );
 
   }
 
-  else{
+  else {
 
     selectedSeats.push(seatId);
 
@@ -568,7 +577,7 @@ function toggleSeat(seatId){
 // TIMER
 // ======================
 
-function startSeatTimer(){
+function startSeatTimer() {
 
   clearInterval(timerInterval);
 
@@ -581,19 +590,19 @@ function startSeatTimer(){
   timerInterval = setInterval(() => {
 
     const mins =
-    Math.floor(
-      remainingSeconds / 60
-    );
+      Math.floor(
+        remainingSeconds / 60
+      );
 
     const secs =
-    remainingSeconds % 60;
+      remainingSeconds % 60;
 
     timerText.innerHTML =
-    `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+      `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
     remainingSeconds--;
 
-    if(remainingSeconds < 0){
+    if (remainingSeconds < 0) {
 
       clearInterval(timerInterval);
 
@@ -609,7 +618,7 @@ function startSeatTimer(){
 // AUTO CANCEL
 // ======================
 
-function autoCancelSeats(){
+function autoCancelSeats() {
 
   paymentExpired = true;
 
@@ -622,10 +631,10 @@ function autoCancelSeats(){
   renderSeats();
 
   paymentSection.style.display =
-  'none';
+    'none';
 
   seatTimer.style.display =
-  'none';
+    'none';
 
 }
 
@@ -633,33 +642,33 @@ function autoCancelSeats(){
 // PAYMENT QR
 // ======================
 
-async function generatePaymentQR(){
+async function generatePaymentQR() {
 
-  if(selectedSeats.length === 0){
+  if (selectedSeats.length === 0) {
 
     paymentSection.style.display =
-    'none';
+      'none';
 
     return;
 
   }
 
   paymentSection.style.display =
-  'block';
+    'block';
 
   startSeatTimer();
 
   const totalAmount =
-  selectedSeats.length *
-  (movie.ticketPrice || 0);
+    selectedSeats.length *
+    (movie.ticketPrice || 0);
 
   totalAmountText.innerHTML =
-  totalAmount;
+    totalAmount;
 
   const upiDoc =
-  await getDoc(
-    doc(db, 'settings', 'upi')
-  );
+    await getDoc(
+      doc(db, 'settings', 'upi')
+    );
 
   let upiData = {
 
@@ -669,34 +678,34 @@ async function generatePaymentQR(){
 
   };
 
-  if(upiDoc.exists()){
+  if (upiDoc.exists()) {
 
     upiData =
-    upiDoc.data();
+      upiDoc.data();
 
   }
 
   const upiUrl =
-  `upi://pay?pa=${upiData.upiId}&pn=${upiData.upiName}&am=${totalAmount}&cu=INR`;
+    `upi://pay?pa=${upiData.upiId}&pn=${upiData.upiName}&am=${totalAmount}&cu=INR`;
 
   const qrDiv =
-  document.createElement('div');
+    document.createElement('div');
 
   new QRCode(qrDiv, {
 
     text: upiUrl,
 
-    width:250,
+    width: 250,
 
-    height:250
+    height: 250
 
   });
 
   const qrImage =
-  qrDiv.querySelector('img');
+    qrDiv.querySelector('img');
 
   upiQr.src =
-  qrImage.src;
+    qrImage.src;
 
 }
 
@@ -704,7 +713,7 @@ async function generatePaymentQR(){
 // LIVE UPDATES
 // ======================
 
-function enableLiveSeatUpdates(){
+function enableLiveSeatUpdates() {
 
   onSnapshot(
 
@@ -713,12 +722,12 @@ function enableLiveSeatUpdates(){
     (snapshot) => {
 
       const updatedMovie =
-      snapshot.data();
+        snapshot.data();
 
-      if(updatedMovie){
+      if (updatedMovie) {
 
         bookedSeats =
-        updatedMovie.bookedSeats || [];
+          updatedMovie.bookedSeats || [];
 
         renderSeats();
 
@@ -740,7 +749,7 @@ verifyPaymentBtn.addEventListener(
 
   async () => {
 
-    if(paymentExpired){
+    if (paymentExpired) {
 
       alert(
         'QR expired. Please reselect seats.'
@@ -751,14 +760,14 @@ verifyPaymentBtn.addEventListener(
     }
 
     verifyPaymentBtn.disabled =
-    true;
+      true;
 
     verifyPaymentBtn.innerHTML =
-    'Processing...';
+      'Processing...';
 
     const totalAmount =
-    selectedSeats.length *
-    (movie.ticketPrice || 0);
+      selectedSeats.length *
+      (movie.ticketPrice || 0);
 
     await addDoc(
 
@@ -767,15 +776,15 @@ verifyPaymentBtn.addEventListener(
       {
 
         userId:
-        auth.currentUser.uid,
+          auth.currentUser.uid,
 
         movieId,
 
         movieName:
-        movie.movieName,
+          movie.movieName,
 
         theater:
-        movie.theater,
+          movie.theater,
 
         selectedSeats,
 
@@ -786,10 +795,10 @@ verifyPaymentBtn.addEventListener(
         totalAmount,
 
         paymentStatus:
-        'PAID',
+          'PAID',
 
         createdAt:
-        serverTimestamp()
+          serverTimestamp()
 
       }
 
@@ -810,7 +819,7 @@ verifyPaymentBtn.addEventListener(
       {
 
         bookedSeats:
-        updatedBookedSeats
+          updatedBookedSeats
 
       }
 
@@ -823,7 +832,7 @@ verifyPaymentBtn.addEventListener(
     alert('Booking Successful');
 
     window.location.href =
-    './dashboard.html';
+      './dashboard.html';
 
   }
 
@@ -833,14 +842,14 @@ verifyPaymentBtn.addEventListener(
 // PDF
 // ======================
 
-function generateTicketPDF(totalAmount){
+function generateTicketPDF(totalAmount) {
 
   const {
     jsPDF
   } = window.jspdf;
 
   const pdf =
-  new jsPDF();
+    new jsPDF();
 
   pdf.setFontSize(22);
 
@@ -909,7 +918,7 @@ dateSelect.addEventListener(
   () => {
 
     selectedDate =
-    dateSelect.value;
+      dateSelect.value;
 
   }
 
@@ -922,7 +931,7 @@ showSelect.addEventListener(
   () => {
 
     selectedShow =
-    showSelect.value;
+      showSelect.value;
 
   }
 
