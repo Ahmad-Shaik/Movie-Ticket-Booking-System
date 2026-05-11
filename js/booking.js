@@ -57,9 +57,9 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  loadUserData(user.uid);
+  await loadUserData(user.uid);
 
-  loadMovies();
+  await loadMovies();
 
 });
 
@@ -82,12 +82,16 @@ async function loadUserData(uid){
       const user =
       userSnap.data();
 
+      // ADMIN
+
       if(user.role === 'admin'){
 
         userName.innerHTML =
         '👑 ADMIN';
 
       }
+
+      // NORMAL USER
 
       else {
 
@@ -179,7 +183,9 @@ async function loadMovies(){
 
     });
 
+    // ======================
     // PLACE FILTER
+    // ======================
 
     placeFilter.innerHTML = `
       <option value="">
@@ -199,7 +205,9 @@ async function loadMovies(){
 
     });
 
+    // ======================
     // THEATER FILTER
+    // ======================
 
     theaterFilter.innerHTML = `
       <option value="">
@@ -258,34 +266,80 @@ function renderMovies(movies){
 
   movies.forEach(movie => {
 
+    // ======================
     // TODAY
+    // ======================
 
     const today =
     new Date();
 
+    today.setHours(
+      0,0,0,0
+    );
+
+    // ======================
     // MOVIE DATE
+    // ======================
 
     const movieDate =
-    new Date(movie.startDate);
+    new Date(
+      movie.startDate + 'T00:00:00'
+    );
 
-    // ENABLE DATE
-    // 1 DAY BEFORE
+    // ======================
+    // BOOKING ENABLE DATE
+    // ONE DAY BEFORE
+    // ======================
 
     const enableDate =
     new Date(movieDate);
 
     enableDate.setDate(
-      enableDate.getDate() - 1
+      movieDate.getDate() - 1
     );
+
+    // ======================
+    // BOOKING STATUS
+    // ======================
 
     const bookingEnabled =
     today >= enableDate;
+
+    // ======================
+    // STATUS BADGE
+    // ======================
+
+    let statusBadge = '';
+
+    if(bookingEnabled){
+
+      statusBadge = `
+        <span class="badge bg-success mb-2">
+          Booking Open
+        </span>
+      `;
+
+    }
+
+    else {
+
+      statusBadge = `
+        <span class="badge bg-warning text-dark mb-2">
+          Coming Soon
+        </span>
+      `;
+
+    }
+
+    // ======================
+    // CARD
+    // ======================
 
     moviesContainer.innerHTML += `
 
       <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
 
-        <div class="neon-card movie-card h-100 p-3">
+        <div class="neon-card movie-card h-100 p-3 d-flex flex-column">
 
           <img
             src="${movie.posterUrl}"
@@ -295,6 +349,8 @@ function renderMovies(movies){
               object-fit:cover;
             "
           >
+
+          ${statusBadge}
 
           <h4 class="neon-heading mb-3">
             ${movie.movieName}
