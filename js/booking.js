@@ -367,10 +367,21 @@ function renderSeats(){
   seatContainer.innerHTML = '';
 
   const totalRows =
-  movie.rows || 5;
+  movie.rows || 10;
 
   const totalCols =
-  movie.cols || 10;
+  movie.cols || 12;
+
+  // WALKWAY SETTINGS
+
+  const leftGapAfter =
+  movie.leftGapAfter || 3;
+
+  const centerGapAfter =
+  movie.centerGapAfter || 6;
+
+  const rightGapAfter =
+  movie.rightGapAfter || 9;
 
   for(
     let r = 1;
@@ -382,7 +393,23 @@ function renderSeats(){
     document.createElement('div');
 
     row.className =
-    'mb-2 text-center';
+    'd-flex justify-content-center align-items-center mb-2 flex-wrap';
+
+    // ROW LABEL
+
+    const rowLabel =
+    document.createElement('div');
+
+    rowLabel.className =
+    'text-light fw-bold me-3';
+
+    rowLabel.style.width =
+    '30px';
+
+    rowLabel.innerHTML =
+    String.fromCharCode(64 + r);
+
+    row.appendChild(rowLabel);
 
     for(
       let c = 1;
@@ -390,17 +417,66 @@ function renderSeats(){
       c++
     ){
 
+      // LEFT WALKWAY
+
+      if(c === leftGapAfter + 1){
+
+        const gap =
+        document.createElement('div');
+
+        gap.style.width =
+        '20px';
+
+        row.appendChild(gap);
+
+      }
+
+      // CENTER WALKWAY
+
+      if(c === centerGapAfter + 1){
+
+        const centerGap =
+        document.createElement('div');
+
+        centerGap.style.width =
+        '50px';
+
+        row.appendChild(centerGap);
+
+      }
+
+      // RIGHT WALKWAY
+
+      if(c === rightGapAfter + 1){
+
+        const gap =
+        document.createElement('div');
+
+        gap.style.width =
+        '20px';
+
+        row.appendChild(gap);
+
+      }
+
       const seatId =
-      `${r}-${c}`;
+      `${String.fromCharCode(64 + r)}${c}`;
 
       const btn =
       document.createElement('button');
 
-      btn.innerHTML =
-      seatId;
+      btn.innerHTML = c;
 
       btn.className =
-      'btn m-1';
+      'btn seat-btn m-1';
+
+      btn.style.width =
+      '45px';
+
+      btn.style.height =
+      '45px';
+
+      // BOOKED
 
       if(
         bookedSeats.includes(seatId)
@@ -414,6 +490,8 @@ function renderSeats(){
 
       }
 
+      // SELECTED
+
       else if(
         selectedSeats.includes(seatId)
       ){
@@ -424,6 +502,8 @@ function renderSeats(){
 
       }
 
+      // AVAILABLE
+
       else{
 
         btn.classList.add(
@@ -433,8 +513,11 @@ function renderSeats(){
       }
 
       btn.addEventListener(
+
         'click',
+
         () => toggleSeat(seatId)
+
       );
 
       row.appendChild(btn);
@@ -446,6 +529,7 @@ function renderSeats(){
   }
 
 }
+
 
 // ======================
 // TOGGLE SEATS
